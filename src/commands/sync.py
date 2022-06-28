@@ -1,37 +1,38 @@
+import asyncio
 from argparse import Namespace
 
-from src.commands import parsing
-
-# Command: PREFIX sync
-#
-# sync start [--with-channels] [--without-channels]
-#    - Starts a sync job
-# sync jobs [view]
-#    - View running sync jobs
-# sync jobs cancel
-#    - Cancel a running sync job
-# sync jobs history
-#    - Show past sync jobs
+import discord
 
 
-def show_help(prefix: str) -> str:
-    return f"""
-{prefix} sync start [--with-channels] [--without-channels]
-"""
+class SyncController:
+    def __init__(self, max_concurrent: int):
+        self.sync_sem = asyncio.Semaphore(max_concurrent)
+
+    def start_downloading(self, channels: list[discord.TextChannel]):
+        # Check for currently running jobs here
+        loop = asyncio.get_event_loop()
+        loop.create_task(self._download_channels(channels))
+
+    async def _download_channels(self, channels: list[discord.TextChannel]):
+        q = list(channels)
+        while q:
+            await self.sync_sem.acquire()
+            next_channel = q.pop()
+            await self._download_channel(next_channel)
+            self.sync_sem.release()
+
+    async def _download_channel(self, channel: discord.TextChannel):
+        print("downloading", channel.name)
 
 
-def parse_args(prefix: str, command: str, argv: list[str]) -> Namespace:
-    try:
-        if command == "start":
-            return _parse_args_start(argv)
-    except parsing.CommandParseError:
-        pass
-    raise parsing.CommandParseError(show_help(prefix))
+sync_controller = SyncController(max_concurrent=2)
 
 
-def _parse_args_start(argv: list[str]) -> Namespace:
-    parser = parsing.CommandParser()
-    parser.add_argument("--with-channels", nargs="+", required=False)
-    parser.add_argument("--without-channels", nargs="+", required=False)
-    args = parser.parse_args(argv)
-    return args
+def run_sync_start(args: Namespace, channels: list[discord.TextChannel]):
+    queued_channels = []
+    for ch in channels:
+        included = args.with_channels is None or ch.id in args.with_channels
+        excluded = args.without_channels is not None and ch.id in args.without_channels
+        if included and not excluded:
+            queued_channels.append(ch)
+    sync_controller.start_downloading(queued_channels)
