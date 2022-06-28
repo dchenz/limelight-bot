@@ -10,19 +10,20 @@ class SyncController:
 
     def start_downloading(self, channels: list[discord.TextChannel]):
         # Check for currently running jobs here
+        # and return immediately
         loop = asyncio.get_event_loop()
-        loop.create_task(self._download_channels(channels))
+        loop.create_task(self._download_channels(channels[::-1]))
 
     async def _download_channels(self, channels: list[discord.TextChannel]):
-        q = list(channels)
-        while q:
-            await self.sync_sem.acquire()
-            next_channel = q.pop()
-            await self._download_channel(next_channel)
-            self.sync_sem.release()
+        await asyncio.gather(*[self._download_channel(c) for c in channels])
 
     async def _download_channel(self, channel: discord.TextChannel):
-        print("downloading", channel.name)
+        await self.sync_sem.acquire()
+        async for message in channel.history(limit=None):  # type: ignore
+            pass  # save messages here
+        self.sync_sem.release()
+
+    # async def _download_message(self, )
 
 
 sync_controller = SyncController(max_concurrent=2)
