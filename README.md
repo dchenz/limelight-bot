@@ -12,7 +12,7 @@ echo "TOKEN=YOUR_SECRET_BOT_TOKEN" > .env
 export TOKEN=YOUR_SECRET_BOT_TOKEN
 
 pip3 install -r requirements.txt
-python3 __init__.py
+python3 bot.py
 
 # Before starting the bot,
 # create/edit the config files if you need them

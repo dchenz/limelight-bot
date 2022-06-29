@@ -2,7 +2,8 @@ import asyncio
 from argparse import Namespace
 
 import discord
-from src.commands.parsing import CommandParser, get_channel_id
+
+from commands.parsing import CommandParser, get_channel_id
 
 
 class SyncController:
