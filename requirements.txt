@@ -4,8 +4,10 @@ attrs==21.4.0
 chardet==4.0.0
 discord==1.7.3
 discord.py==1.7.3
+greenlet==1.1.2
 idna==3.3
 multidict==6.0.2
 python-dotenv==0.20.0
+SQLAlchemy==1.4.39
 typing_extensions==4.2.0
 yarl==1.7.2
