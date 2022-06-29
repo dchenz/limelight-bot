@@ -45,7 +45,10 @@ class LimelightBot(discord.Client):
                 if len(tokens) == 2:
                     raise CommandParseError
                 if tokens[2] == "start":
-                    run_sync_start(message.guild.text_channels, tokens[3:])  # type: ignore
+                    # Remove channels that have been ignored by config
+                    channels = [c for c in message.guild.text_channels   # type: ignore
+                        if c.id not in self.ignored_channels]
+                    run_sync_start(channels, tokens[3:])
                 else:
                     raise CommandParseError
             else:
