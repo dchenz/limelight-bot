@@ -17,11 +17,16 @@ class LimelightBot(discord.Client):
         # By default, all channels can be logged if the bot has read permissions
         self.ignored_channels = set(ignored_channels) if ignored_channels else set()
 
+    def show_commands(self):
+        cmds = ("sync start [--with-channels|--without-channels]",)
+        return "\n".join(map(lambda s: self.prefix + " " + s, cmds))
+
     async def on_ready(self):
         print("----------------")
         print("Bot started")
         print("----------------")
         print(f"Prefix: {self.prefix}")
+        print("----------------")
 
     async def on_message(self, message: discord.Message):
         if message.author == self.user:
@@ -30,17 +35,26 @@ class LimelightBot(discord.Client):
             return
         if message.guild is None:
             return
-        cmd_tokens = shlex.split(message.content)
-        if len(cmd_tokens) == 0 or cmd_tokens[0] != self.prefix:
+        tokens = shlex.split(message.content)
+        if len(tokens) == 0 or tokens[0] != self.prefix:
             return
-        cmd_tokens = cmd_tokens[1:]
         try:
-            args = parsing.parse_command(self.prefix, cmd_tokens)
-            if args is None:
-                return
-        except parsing.CommandParseError as e:
-            await message.channel.send(f"Available commands:\n```\n{e.message}\n```")
-            return
+            if len(tokens) == 1:
+                raise parsing.CommandParseError
+            if tokens[1] == "sync":
+                if len(tokens) == 2:
+                    raise parsing.CommandParseError
+                if tokens[2] == "start":
+                    run_sync_start(message.guild.text_channels, tokens[3:])  # type: ignore
+                else:
+                    raise parsing.CommandParseError
+            else:
+                raise parsing.CommandParseError
 
-        if cmd_tokens[:2] == ["sync", "start"]:
-            run_sync_start(args, message.guild.text_channels)  # type: ignore
+        except parsing.CommandParseError as e:
+            if e.message == "":
+                feedback = f"**Commands:**\n```\n{self.show_commands()}\n```"
+            else:
+                feedback = f"**Error**:\n```\n{e.message}\n```"
+            await message.channel.send(feedback)
+            return
