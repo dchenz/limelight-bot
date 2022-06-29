@@ -2,7 +2,7 @@ import shlex
 
 import discord
 
-from src.commands import parsing
+from src.commands.parsing import CommandParseError
 from src.commands.sync import run_sync_start
 
 
@@ -40,18 +40,18 @@ class LimelightBot(discord.Client):
             return
         try:
             if len(tokens) == 1:
-                raise parsing.CommandParseError
+                raise CommandParseError
             if tokens[1] == "sync":
                 if len(tokens) == 2:
-                    raise parsing.CommandParseError
+                    raise CommandParseError
                 if tokens[2] == "start":
                     run_sync_start(message.guild.text_channels, tokens[3:])  # type: ignore
                 else:
-                    raise parsing.CommandParseError
+                    raise CommandParseError
             else:
-                raise parsing.CommandParseError
+                raise CommandParseError
 
-        except parsing.CommandParseError as e:
+        except CommandParseError as e:
             if e.message == "":
                 feedback = f"**Commands:**\n```\n{self.show_commands()}\n```"
             else:

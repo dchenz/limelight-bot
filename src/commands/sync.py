@@ -2,8 +2,7 @@ import asyncio
 from argparse import Namespace
 
 import discord
-from src.commands import parsing
-from src.utils import get_channel_id_int
+from src.commands.parsing import CommandParser, get_channel_id
 
 
 class SyncController:
@@ -45,7 +44,7 @@ def run_sync_start(channels: list[discord.TextChannel], arg_tokens: list[str]):
 
 def _parse_sync_start_args(arg_tokens: list[str]) -> Namespace:
 
-    parser = parsing.CommandParser()
+    parser = CommandParser()
     g = parser.add_mutually_exclusive_group()
     g.add_argument("--with-channels", nargs="+", required=False)
     g.add_argument("--without-channels", nargs="+", required=False)
@@ -53,22 +52,10 @@ def _parse_sync_start_args(arg_tokens: list[str]) -> Namespace:
 
     # Convert channels to integer ID
     if args.with_channels:
-        chs = []
-        for ch in args.with_channels:
-            cid = get_channel_id_int(ch)
-            if cid is None:
-                raise parsing.CommandParseError(f"Invalid channel ID format: {ch}")
-            chs.append(cid)
-        args.with_channels = chs
+        args.with_channels = [get_channel_id(c) for c in args.with_channels]
 
     # Convert channels to integer ID
     if args.without_channels:
-        chs = []
-        for ch in args.without_channels:
-            cid = get_channel_id_int(ch)
-            if cid is None:
-                raise parsing.CommandParseError(f"Invalid channel ID format: {ch}")
-            chs.append(cid)
-        args.without_channels = chs
+        args.without_channels = [get_channel_id(c) for c in args.without_channels]
 
     return args
