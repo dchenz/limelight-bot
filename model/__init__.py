@@ -1,2 +1,3 @@
-from model.message import Message
-from model.user import User
+from model.embed import *
+from model.message import *
+from model.user import *
