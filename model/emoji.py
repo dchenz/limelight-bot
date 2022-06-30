@@ -2,7 +2,7 @@ from database import Base
 from sqlalchemy import BigInteger, Boolean, Column, Integer, String
 from sqlalchemy.orm import relationship
 
-from model.reacts_message_emoji import reacts_message_emoji_table
+from model.message_reacts import message_reacts_table
 
 
 class Emoji(Base):
@@ -21,5 +21,5 @@ class Emoji(Base):
     unicode = Column(String)
 
     messages = relationship(
-        "Message", secondary=reacts_message_emoji_table, back_populates="reactions"
+        "Message", secondary=message_reacts_table, back_populates="reactions"
     )

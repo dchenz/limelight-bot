@@ -2,7 +2,7 @@ from database import Base
 from sqlalchemy import BigInteger, Column, Integer, String
 from sqlalchemy.orm import relationship
 
-from model.sent_message_sticker import sent_message_sticker_table
+from model.sent_sticker import sent_sticker_table
 
 
 class Sticker(Base):
@@ -17,5 +17,5 @@ class Sticker(Base):
     image_url = Column(String)
 
     messages = relationship(
-        "Message", secondary=sent_message_sticker_table, back_populates="stickers"
+        "Message", secondary=sent_sticker_table, back_populates="stickers"
     )

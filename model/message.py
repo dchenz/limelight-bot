@@ -10,11 +10,11 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from model.mentions_message_channel import mentions_message_channel_table
-from model.mentions_message_role import mentions_message_role_table
-from model.mentions_message_user import mentions_message_user_table
-from model.reacts_message_emoji import reacts_message_emoji_table
-from model.sent_message_sticker import sent_message_sticker_table
+from model.channel_mentions import channel_mentions_table
+from model.role_mentions import role_mentions_table
+from model.user_mentions import user_mentions_table
+from model.message_reacts import message_reacts_table
+from model.sent_sticker import sent_sticker_table
 
 
 class Message(Base):
@@ -47,19 +47,19 @@ class Message(Base):
     replied_by = relationship("Message", back_populates="replying_to")
 
     mention_users = relationship(
-        "User", secondary=mentions_message_user_table, back_populates="mentions"
+        "User", secondary=user_mentions_table, back_populates="mentions"
     )
     mention_roles = relationship(
-        "Role", secondary=mentions_message_role_table, back_populates="mentions"
+        "Role", secondary=role_mentions_table, back_populates="mentions"
     )
     mention_channels = relationship(
-        "Channel", secondary=mentions_message_channel_table, back_populates="mentions"
+        "Channel", secondary=channel_mentions_table, back_populates="mentions"
     )
     embeds = relationship("Embed", back_populates="message")
     attachments = relationship("Attachment", back_populates="message")
     reactions = relationship(
-        "Emoji", secondary=reacts_message_emoji_table, back_populates="messages"
+        "Emoji", secondary=message_reacts_table, back_populates="messages"
     )
     stickers = relationship(
-        "Sticker", secondary=sent_message_sticker_table, back_populates="messages"
+        "Sticker", secondary=sent_sticker_table, back_populates="messages"
     )

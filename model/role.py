@@ -2,7 +2,7 @@ from database import Base
 from sqlalchemy import BigInteger, Column, Integer, String
 from sqlalchemy.orm import relationship
 
-from model.mentions_message_role import mentions_message_role_table
+from model.role_mentions import role_mentions_table
 
 
 class Role(Base):
@@ -15,5 +15,5 @@ class Role(Base):
     color = Column(Integer, nullable=False)
 
     mentions = relationship(
-        "Message", secondary=mentions_message_role_table, back_populates="mention_roles"
+        "Message", secondary=role_mentions_table, back_populates="mention_roles"
     )

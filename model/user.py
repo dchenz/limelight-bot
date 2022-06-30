@@ -2,7 +2,7 @@ from database import Base
 from sqlalchemy import BigInteger, Column, String
 from sqlalchemy.orm import relationship
 
-from model.mentions_message_user import mentions_message_user_table
+from model.user_mentions import user_mentions_table
 
 
 class User(Base):
@@ -16,5 +16,5 @@ class User(Base):
 
     messages = relationship("Message", back_populates="author")
     mentions = relationship(
-        "Message", secondary=mentions_message_user_table, back_populates="mention_users"
+        "Message", secondary=user_mentions_table, back_populates="mention_users"
     )

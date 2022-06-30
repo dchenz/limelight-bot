@@ -2,7 +2,7 @@ from database import Base
 from sqlalchemy import BigInteger, Column, String
 from sqlalchemy.orm import relationship
 
-from model.mentions_message_channel import mentions_message_channel_table
+from model.channel_mentions import channel_mentions_table
 
 
 class Channel(Base):
@@ -16,6 +16,6 @@ class Channel(Base):
     messages = relationship("Message", back_populates="channel")
     mentions = relationship(
         "Message",
-        secondary=mentions_message_channel_table,
+        secondary=channel_mentions_table,
         back_populates="mention_channels",
     )

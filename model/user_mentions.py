@@ -1,9 +1,9 @@
 from database import Base
 from sqlalchemy import Column, ForeignKey, Table
 
-mentions_message_channel_table = Table(
-    "mentions_message_channel",
+user_mentions_table = Table(
+    "discord_user_mentions",
     Base.metadata,
     Column("message_id", ForeignKey("discord_message.uid")),
-    Column("channel_id", ForeignKey("discord_channel.uid")),
+    Column("user_id", ForeignKey("discord_user.uid")),
 )

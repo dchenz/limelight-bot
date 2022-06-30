@@ -1,8 +1,8 @@
 from database import Base
 from sqlalchemy import Column, ForeignKey, Integer, Table
 
-reacts_message_emoji_table = Table(
-    "reacts_message_emoji",
+message_reacts_table = Table(
+    "discord_message_reacts",
     Base.metadata,
     Column("message_id", ForeignKey("discord_message.uid"), primary_key=True),
     Column("emoji_id", ForeignKey("discord_emoji.uid"), primary_key=True),
