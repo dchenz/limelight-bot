@@ -2,6 +2,7 @@ import asyncio
 from argparse import Namespace
 
 import discord
+from database.save import save_discord_message
 
 from commands.parsing import CommandParser, get_channel_id
 
@@ -23,14 +24,17 @@ class SyncController:
         loop.create_task(self._download_channels(channels[::-1]))
 
     async def _download_channels(self, channels: list[discord.TextChannel]):
+        print("starting download sync")
         await asyncio.gather(*[self._download_channel(c) for c in channels])
+        print("done")
 
     async def _download_channel(self, channel: discord.TextChannel):
         await self.sync_sem.acquire()
-        print(channel.name)
-        # async for message in channel.history(limit=None):  # type: ignore
-        #     pass  # save messages here
+        print("downloading", channel.name)
+        async for message in channel.history(limit=None):  # type: ignore
+            save_discord_message(message)
         self.sync_sem.release()
+        print("finished", channel.name)
 
     # async def _download_message(self, )
 

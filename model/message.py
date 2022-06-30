@@ -1,13 +1,6 @@
 from database import Base
-from sqlalchemy import (
-    BigInteger,
-    Boolean,
-    Column,
-    DateTime,
-    ForeignKey,
-    Integer,
-    String,
-)
+from sqlalchemy import (BigInteger, Boolean, Column, DateTime, ForeignKey,
+                        Integer, String)
 from sqlalchemy.orm import relationship
 
 from model.channel_mentions import channel_mentions_table
@@ -30,10 +23,10 @@ class Message(Base):
     tts = Column(Boolean, nullable=False)
     mention_everyone = Column(Boolean, nullable=False)
     pinned = Column(Boolean, nullable=False)
-    content = Column(String)
+    content = Column(String, nullable=False)
     jump_url = Column(String, nullable=False)
-    bot = Column(Boolean, nullable=False)
     flags = Column(Integer, nullable=False)
+    variant = Column(Integer, nullable=False)
 
     author_id = Column(BigInteger, ForeignKey("discord_user.uid"), nullable=False)
     author = relationship("User", back_populates="messages")
@@ -42,11 +35,10 @@ class Message(Base):
 
     # Message is a reply if "type" attribute = 19
     # Then, get replied message from "message_reference" attribute
-    replying_to_id = Column(BigInteger, ForeignKey("discord_message.uid"))
-    replying_to = relationship(
-        "Message", back_populates="replied_by", remote_side=[uid]
-    )
-    replied_by = relationship("Message", back_populates="replying_to")
+    replied_to_id = Column(BigInteger, ForeignKey("discord_message.uid"))
+    replied_to = relationship("Message", back_populates="replied_by", remote_side=[uid])
+    replied_by = relationship("Message", back_populates="replied_to")
+    replied_to_deleted = Column(Boolean, nullable=False)
 
     mention_users = relationship(
         "User", secondary=user_mentions_table, back_populates="mentions"

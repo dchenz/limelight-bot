@@ -1,5 +1,5 @@
 from database import Base
-from sqlalchemy import BigInteger, Column, String
+from sqlalchemy import BigInteger, Boolean, Column, String
 from sqlalchemy.orm import relationship
 
 from model.user_mentions import user_mentions_table
@@ -17,7 +17,8 @@ class User(Base):
     uid = Column(BigInteger, primary_key=True)
 
     username = Column(String, nullable=False, unique=True)
-    avatar_url = Column(String)
+    bot = Column(Boolean, nullable=False)
+    avatar_url = Column(String, nullable=False)
 
     messages = relationship("Message", back_populates="author")
     mentions = relationship(
