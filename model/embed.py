@@ -1,5 +1,6 @@
 from database import Base
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import (BigInteger, Boolean, Column, DateTime, ForeignKey,
+                        Integer, String)
 from sqlalchemy.orm import relationship
 
 
@@ -7,12 +8,16 @@ class Embed(Base):
     __tablename__ = "discord_message_embed"
 
     uid = Column(Integer, primary_key=True)
+
     title = Column(String)
     variant = Column(String)
     description = Column(String)
     url = Column(String)
     timestamp = Column(DateTime)
     color = Column(Integer)
+
+    message_id = Column(BigInteger, ForeignKey("discord_message.uid"), nullable=False)
+    message = relationship("Message", back_populates="embeds")
 
     image = relationship("EmbedImage", uselist=False)
     video = relationship("EmbedVideo", uselist=False)
