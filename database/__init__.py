@@ -20,4 +20,6 @@ Base.query = Session.query_property()
 
 
 def init_database():
+    """Create all tables defined by the model. Called after modules are imported."""
+
     Base.metadata.create_all(bind=_engine)

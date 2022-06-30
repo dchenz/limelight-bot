@@ -1,20 +1,26 @@
 from argparse import ArgumentParser
 
 
-# Prevents the program from exiting on parsing errors
 class CommandParser(ArgumentParser):
+    """Argparse wrapper that prevents errors from exiting the program"""
+
     def error(self, message: str):
         raise CommandParseError(message)
 
 
-# Used to store feedback for the bot's user
 class CommandParseError(Exception):
+    """Error used to store feedback for the bot's user"""
+
     def __init__(self, message: str = ""):
         self.message = message
 
 
 def get_channel_id(idstr: str) -> int:
-    # Tagging a channel results in the ID format "<#1234567890>"
+    """
+    Converts a channel ID string into an integer.
+    Channel mentions are also supported in the format of "<#1234567890>".
+    """
+
     if idstr.startswith("<#") and idstr.endswith(">"):
         idstr = idstr[2:-1]
     try:

@@ -7,6 +7,12 @@ from commands.parsing import CommandParser, get_channel_id
 
 
 class SyncController:
+    """
+    Controls the scheduing of channel being downloaded
+    and ensures that no more than the configured limit
+    are running concurrently.
+    """
+
     def __init__(self, max_concurrent: int):
         self.sync_sem = asyncio.Semaphore(max_concurrent)
 
@@ -33,6 +39,12 @@ sync_controller = SyncController(max_concurrent=2)
 
 
 def run_sync_start(channels: list[discord.TextChannel], arg_tokens: list[str]):
+    """
+    Starts a sync job to download messages from a list of channels.
+    Arguments can specify --with-channels or --without-channels
+    to select certain channels from this list to include/exclude.
+    """
+
     args = _parse_sync_start_args(arg_tokens)
     queued_channels = []
     for ch in channels:
@@ -44,6 +56,10 @@ def run_sync_start(channels: list[discord.TextChannel], arg_tokens: list[str]):
 
 
 def _parse_sync_start_args(arg_tokens: list[str]) -> Namespace:
+    """
+    Validates command arguments received from the user
+    and normalises channel IDs into integers.
+    """
 
     parser = CommandParser()
     g = parser.add_mutually_exclusive_group()
