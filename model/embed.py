@@ -1,6 +1,13 @@
 from database import Base
-from sqlalchemy import (BigInteger, Boolean, Column, DateTime, ForeignKey,
-                        Integer, String)
+from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+)
 from sqlalchemy.orm import relationship
 
 
