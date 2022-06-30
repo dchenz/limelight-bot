@@ -4,6 +4,7 @@ import discord
 
 from commands.parsing import CommandParseError
 from commands.sync import run_sync_start
+from database import init_database
 
 
 class LimelightBot(discord.Client):
@@ -22,6 +23,7 @@ class LimelightBot(discord.Client):
         return "\n".join(map(lambda s: self.prefix + " " + s, cmds))
 
     async def on_ready(self):
+        init_database()
         print("----------------")
         print("Bot started")
         print("----------------")
