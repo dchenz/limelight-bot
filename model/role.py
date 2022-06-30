@@ -6,6 +6,8 @@ from model.role_mentions import role_mentions_table
 
 
 class Role(Base):
+    """https://discordpy.readthedocs.io/en/stable/api.html#role"""
+
     __tablename__ = "discord_role"
 
     # Discord 18-digit ID

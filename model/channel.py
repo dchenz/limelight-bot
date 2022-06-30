@@ -6,6 +6,11 @@ from model.channel_mentions import channel_mentions_table
 
 
 class Channel(Base):
+    """
+    This model only supports text channels.
+    https://discordpy.readthedocs.io/en/stable/api.html#discord.TextChannel
+    """
+
     __tablename__ = "discord_channel"
 
     # Discord 18-digit ID

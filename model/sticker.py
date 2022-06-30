@@ -6,6 +6,8 @@ from model.sent_sticker import sent_sticker_table
 
 
 class Sticker(Base):
+    """https://discordpy.readthedocs.io/en/stable/api.html#sticker"""
+
     __tablename__ = "discord_sticker"
 
     # Discord 18-digit ID

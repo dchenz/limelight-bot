@@ -4,6 +4,8 @@ from sqlalchemy.orm import relationship
 
 
 class Attachment(Base):
+    """https://discordpy.readthedocs.io/en/stable/api.html#attachment"""
+
     __tablename__ = "discord_message_attachment"
 
     # Discord 18-digit ID

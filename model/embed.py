@@ -12,6 +12,8 @@ from sqlalchemy.orm import relationship
 
 
 class Embed(Base):
+    """https://discordpy.readthedocs.io/en/stable/api.html#discord.Embed"""
+
     __tablename__ = "discord_message_embed"
 
     uid = Column(Integer, primary_key=True)
@@ -36,6 +38,8 @@ class Embed(Base):
 
 
 class EmbedImage(Base):
+    """https://discordpy.readthedocs.io/en/stable/api.html#discord.Embed"""
+
     __tablename__ = "discord_message_embed_image"
 
     embed_id = Column(
@@ -48,6 +52,8 @@ class EmbedImage(Base):
 
 
 class EmbedVideo(Base):
+    """https://discordpy.readthedocs.io/en/stable/api.html#discord.Embed"""
+
     __tablename__ = "discord_message_embed_video"
 
     embed_id = Column(
@@ -60,6 +66,8 @@ class EmbedVideo(Base):
 
 
 class EmbedThumbnail(Base):
+    """https://discordpy.readthedocs.io/en/stable/api.html#discord.Embed"""
+
     __tablename__ = "discord_message_embed_thumbnail"
 
     embed_id = Column(
@@ -72,6 +80,8 @@ class EmbedThumbnail(Base):
 
 
 class EmbedProvider(Base):
+    """https://discordpy.readthedocs.io/en/stable/api.html#discord.Embed"""
+
     __tablename__ = "discord_message_embed_provider"
 
     embed_id = Column(
@@ -82,6 +92,8 @@ class EmbedProvider(Base):
 
 
 class EmbedAuthor(Base):
+    """https://discordpy.readthedocs.io/en/stable/api.html#discord.Embed"""
+
     __tablename__ = "discord_message_embed_author"
 
     embed_id = Column(
@@ -94,6 +106,8 @@ class EmbedAuthor(Base):
 
 
 class EmbedFooter(Base):
+    """https://discordpy.readthedocs.io/en/stable/api.html#discord.Embed"""
+
     __tablename__ = "discord_message_embed_footer"
 
     embed_id = Column(
@@ -106,6 +120,8 @@ class EmbedFooter(Base):
 
 
 class EmbedField(Base):
+    """https://discordpy.readthedocs.io/en/stable/api.html#discord.Embed"""
+
     __tablename__ = "discord_message_embed_field"
 
     uid = Column(Integer, primary_key=True)
