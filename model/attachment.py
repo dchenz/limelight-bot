@@ -12,7 +12,6 @@ class Attachment(Base):
     uid = Column(BigInteger, primary_key=True)
 
     filename = Column(String, nullable=False)
-    description = Column(String)
     content_type = Column(String)
     size = Column(Integer, nullable=False)
     url = Column(String, nullable=False)
