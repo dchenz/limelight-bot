@@ -16,6 +16,8 @@ def save_discord_message(message: discord.Message):
 
 
 def get_message(message: discord.Message) -> model.Message:
+    """Convert a discord message into its model object"""
+
     model_author = get_author(message)
     model_channel = get_channel(message)
 
@@ -41,12 +43,14 @@ def get_message(message: discord.Message) -> model.Message:
         author=model_author,
         channel=model_channel,
         replied_to=model_replied_to,
-        replied_to_deleted=replied_to_deleted
+        replied_to_deleted=replied_to_deleted,
     )
     return model_message
 
 
 def get_author(message: discord.Message) -> model.User:
+    """Convert a discord message's author into its model object"""
+
     u: discord.User = message.author  # type: ignore
     return model.User(
         uid=u.id,
@@ -57,12 +61,19 @@ def get_author(message: discord.Message) -> model.User:
 
 
 def get_channel(message: discord.Message) -> model.Channel:
+    """Convert a discord message's channel into its model object"""
+
     return model.Channel(uid=message.channel.id, name=message.channel.name)
 
 
-def get_replied_to_message(message: discord.Message) -> (
-    Optional[Union[discord.Message, discord.DeletedReferencedMessage]]
-):
+def get_replied_to_message(
+    message: discord.Message,
+) -> (Optional[Union[discord.Message, discord.DeletedReferencedMessage]]):
+    """
+    If a discord message replies to a message,
+    convert the other message into its model object
+    """
+
     ref = message.reference
     is_system = message.type != discord.MessageType.default
     if is_system or ref is None:
