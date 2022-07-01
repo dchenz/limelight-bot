@@ -33,8 +33,6 @@ class Message(Base):
     channel_id = Column(BigInteger, ForeignKey("discord_channel.uid"), nullable=False)
     channel = relationship("Channel", back_populates="messages")
 
-    # Message is a reply if "type" attribute = 19
-    # Then, get replied message from "message_reference" attribute
     replied_to_id = Column(BigInteger, ForeignKey("discord_message.uid"))
     replied_to = relationship("Message", back_populates="replied_by", remote_side=[uid])
     replied_by = relationship("Message", back_populates="replied_to")
