@@ -26,54 +26,31 @@ class Embed(Base):
     color = Column(Integer)
 
     message_id = Column(BigInteger, ForeignKey("discord_message.uid"), nullable=False)
+    image_id = Column(Integer, ForeignKey("discord_message_embed_media.uid"))
+    video_id = Column(Integer, ForeignKey("discord_message_embed_media.uid"))
+    thumbnail_id = Column(Integer, ForeignKey("discord_message_embed_media.uid"))
+    provider_id = Column(Integer, ForeignKey("discord_message_embed_provider.uid"))
+    author_id = Column(Integer, ForeignKey("discord_message_embed_author.uid"))
+    footer_id = Column(Integer, ForeignKey("discord_message_embed_footer.uid"))
 
     message = relationship("Message", back_populates="embeds")
-
-    image = relationship("EmbedImage", uselist=False)
-    video = relationship("EmbedVideo", uselist=False)
-    thumbnail = relationship("EmbedThumbnail", uselist=False)
+    image = relationship("EmbedMedia", uselist=False, foreign_keys=[image_id])
+    video = relationship("EmbedMedia", uselist=False, foreign_keys=[video_id])
+    thumbnail = relationship("EmbedMedia", uselist=False, foreign_keys=[thumbnail_id])
     provider = relationship("EmbedProvider", uselist=False)
     author = relationship("EmbedAuthor", uselist=False)
     footer = relationship("EmbedFooter", uselist=False)
+
     fields = relationship("EmbedField")
 
 
-class EmbedImage(Base):
+class EmbedMedia(Base):
     """https://discordpy.readthedocs.io/en/stable/api.html#discord.Embed"""
 
-    __tablename__ = "discord_message_embed_image"
+    __tablename__ = "discord_message_embed_media"
 
-    embed_id = Column(
-        Integer, ForeignKey("discord_message_embed.uid"), primary_key=True
-    )
-    url = Column(String)
-    proxy_url = Column(String)
-    width = Column(Integer)
-    height = Column(Integer)
+    uid = Column(Integer, primary_key=True)
 
-
-class EmbedVideo(Base):
-    """https://discordpy.readthedocs.io/en/stable/api.html#discord.Embed"""
-
-    __tablename__ = "discord_message_embed_video"
-
-    embed_id = Column(
-        Integer, ForeignKey("discord_message_embed.uid"), primary_key=True
-    )
-    url = Column(String)
-    proxy_url = Column(String)
-    width = Column(Integer)
-    height = Column(Integer)
-
-
-class EmbedThumbnail(Base):
-    """https://discordpy.readthedocs.io/en/stable/api.html#discord.Embed"""
-
-    __tablename__ = "discord_message_embed_thumbnail"
-
-    embed_id = Column(
-        Integer, ForeignKey("discord_message_embed.uid"), primary_key=True
-    )
     url = Column(String)
     proxy_url = Column(String)
     width = Column(Integer)
@@ -85,9 +62,8 @@ class EmbedProvider(Base):
 
     __tablename__ = "discord_message_embed_provider"
 
-    embed_id = Column(
-        Integer, ForeignKey("discord_message_embed.uid"), primary_key=True
-    )
+    uid = Column(Integer, primary_key=True)
+
     name = Column(String)
     url = Column(String)
 
@@ -97,9 +73,8 @@ class EmbedAuthor(Base):
 
     __tablename__ = "discord_message_embed_author"
 
-    embed_id = Column(
-        Integer, ForeignKey("discord_message_embed.uid"), primary_key=True
-    )
+    uid = Column(Integer, primary_key=True)
+
     name = Column(String, nullable=False)
     url = Column(String)
     icon_url = Column(String)
@@ -111,9 +86,8 @@ class EmbedFooter(Base):
 
     __tablename__ = "discord_message_embed_footer"
 
-    embed_id = Column(
-        Integer, ForeignKey("discord_message_embed.uid"), primary_key=True
-    )
+    uid = Column(Integer, primary_key=True)
+
     text = Column(String, nullable=False)
     url = Column(String)
     icon_url = Column(String)
@@ -126,7 +100,9 @@ class EmbedField(Base):
     __tablename__ = "discord_message_embed_field"
 
     uid = Column(Integer, primary_key=True)
-    embed_id = Column(Integer, ForeignKey("discord_message_embed.uid"))
+
     name = Column(String, nullable=False)
     value = Column(String)
     inline = Column(Boolean)
+
+    embed_id = Column(Integer, ForeignKey("discord_message_embed.uid"), nullable=False)
