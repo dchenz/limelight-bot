@@ -20,6 +20,11 @@ def save_discord_message(message: discord.Message):
             e.message = model_message
             session.merge(e)
 
+        for atch in message.attachments:
+            a = _get_attachment(atch)
+            a.message = model_message
+            session.merge(a)
+
         session.commit()
 
 
@@ -164,3 +169,18 @@ def _embed_value_or_none(embed_value):
     if embed_value == discord.Embed.Empty:
         return None
     return embed_value
+
+
+def _get_attachment(attachment: discord.Attachment) -> model.Attachment:
+    """Convert a discord message attachment into its model object"""
+
+    return model.Attachment(
+        uid=attachment.id,
+        filename=attachment.filename,
+        content_type=attachment.content_type,
+        size=attachment.size,
+        url=attachment.url,
+        proxy_url=attachment.proxy_url,
+        width=attachment.width,
+        height=attachment.height,
+    )
