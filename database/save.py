@@ -11,6 +11,14 @@ def save_discord_message(message: discord.Message):
 
     model_message = _get_message(message)
 
+    for atch in message.attachments:
+        a = _get_attachment(atch)
+        model_message.attachments.append(a)
+
+    for role in message.role_mentions:
+        r = _get_role(role)
+        model_message.mention_roles.append(r)
+
     with Session() as session:
 
         session.merge(model_message)
@@ -19,11 +27,6 @@ def save_discord_message(message: discord.Message):
             e = _get_embed(embed)
             e.message = model_message
             session.merge(e)
-
-        for atch in message.attachments:
-            a = _get_attachment(atch)
-            a.message = model_message
-            session.merge(a)
 
         session.commit()
 
@@ -184,3 +187,9 @@ def _get_attachment(attachment: discord.Attachment) -> model.Attachment:
         width=attachment.width,
         height=attachment.height,
     )
+
+
+def _get_role(role: discord.Role) -> model.Role:
+    """Convert a discord role into its model object"""
+
+    return model.Role(uid=role.id, name=role.name, color=role.color.value)
