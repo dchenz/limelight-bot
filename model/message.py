@@ -1,6 +1,13 @@
 from database import Base
-from sqlalchemy import (BigInteger, Boolean, Column, DateTime, ForeignKey,
-                        Integer, String)
+from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+)
 from sqlalchemy.orm import relationship
 
 from model.channel_mentions import channel_mentions_table
@@ -29,14 +36,17 @@ class Message(Base):
     variant = Column(Integer, nullable=False)
 
     author_id = Column(BigInteger, ForeignKey("discord_user.uid"), nullable=False)
-    author = relationship("User", back_populates="messages")
     channel_id = Column(BigInteger, ForeignKey("discord_channel.uid"), nullable=False)
-    channel = relationship("Channel", back_populates="messages")
-
     replied_to_id = Column(BigInteger, ForeignKey("discord_message.uid"))
+    replied_to_deleted = Column(Boolean, nullable=False)
+
+    author = relationship("User", back_populates="messages")
+    channel = relationship("Channel", back_populates="messages")
     replied_to = relationship("Message", back_populates="replied_by", remote_side=[uid])
     replied_by = relationship("Message", back_populates="replied_to")
-    replied_to_deleted = Column(Boolean, nullable=False)
+
+    embeds = relationship("Embed", back_populates="message")
+    attachments = relationship("Attachment", back_populates="message")
 
     mention_users = relationship(
         "User", secondary=user_mentions_table, back_populates="mentions"
@@ -47,8 +57,6 @@ class Message(Base):
     mention_channels = relationship(
         "Channel", secondary=channel_mentions_table, back_populates="mentions"
     )
-    embeds = relationship("Embed", back_populates="message")
-    attachments = relationship("Attachment", back_populates="message")
     reactions = relationship(
         "Emoji", secondary=message_reacts_table, back_populates="messages"
     )

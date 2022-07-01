@@ -26,6 +26,7 @@ class Embed(Base):
     color = Column(Integer)
 
     message_id = Column(BigInteger, ForeignKey("discord_message.uid"), nullable=False)
+
     message = relationship("Message", back_populates="embeds")
 
     image = relationship("EmbedImage", uselist=False)
