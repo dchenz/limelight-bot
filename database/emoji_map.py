@@ -1,5 +1,3 @@
-from zlib import crc32
-
 import discord_emoji as de
 
 
@@ -39,11 +37,3 @@ def name_to_asset(name: str) -> str:
 
     u = name_to_unicode(name)
     return unicode_to_asset(u)
-
-
-def unicode_to_unique_id(u: str) -> int:
-    """Convert unicode character into a unique integer that fits in 8 bytes"""
-
-    # I've tested this and it produces no collisions
-    # Hope that new unicode emojis aren't added to Discord!
-    return crc32(u.encode("utf-8"))

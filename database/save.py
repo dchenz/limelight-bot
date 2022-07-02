@@ -233,7 +233,8 @@ def _get_emoji(emoji: Union[discord.Emoji, discord.PartialEmoji, str]) -> model.
     """Convert a discord emoji into its model object"""
 
     if isinstance(emoji, str):
-        emoji_id = emoji_map.unicode_to_unique_id(emoji)
+        # Unicode emojis will exist in same table as custom emojis which have real snowflakes
+        emoji_id = snowflake.hash_to_snowflake(emoji, global_unique=True)
         emoji_name = emoji_map.unicode_to_name(emoji)
         emoji_url = emoji_map.unicode_to_asset(emoji)
         is_custom = False
