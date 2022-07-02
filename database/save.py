@@ -27,9 +27,9 @@ def save_discord_message(message: discord.Message):
 
         session.merge(model_message)
 
-        # for react in message.reactions:
-        #     r = _get_reaction(react, model_message)
-        #     session.merge(r)
+        for react in message.reactions:
+            r = _get_reaction(react, model_message)
+            session.merge(r)
 
         session.commit()
 
@@ -241,7 +241,7 @@ def _get_emoji(emoji: Union[discord.Emoji, discord.PartialEmoji, str]) -> model.
     else:
         emoji_id = emoji.id
         emoji_name = emoji.name
-        emoji_url = emoji.url
+        emoji_url = str(emoji.url)
         is_custom = True
 
     return model.Emoji(uid=emoji_id, name=emoji_name, url=emoji_url, custom=is_custom)
