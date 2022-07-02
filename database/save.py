@@ -19,6 +19,10 @@ def save_discord_message(message: discord.Message):
         r = _get_role(role)
         model_message.mention_roles.append(r)
 
+    for embed in message.embeds:
+        e = _get_embed(embed)
+        model_message.embeds.append(e)
+
     with Session() as session:
 
         session.merge(model_message)
@@ -26,11 +30,6 @@ def save_discord_message(message: discord.Message):
         # for react in message.reactions:
         #     r = _get_reaction(react, model_message)
         #     session.merge(r)
-
-        for embed in message.embeds:
-            e = _get_embed(embed)
-            e.message = model_message
-            session.merge(e)
 
         session.commit()
 
@@ -110,7 +109,9 @@ def _get_embed(embed: discord.Embed) -> model.Embed:
     # This ID will be shared across some embed subtables,
     # such as model.EmbedFooter, because they are 1-1 mapping
     # and only exist if model.Embed exists.
-    embed_unique_id = snowflake.hash_object_to_snowflake(embed.to_dict())
+    embed_unique_id = snowflake.hash_object_to_snowflake(
+        embed.to_dict(), global_unique=False
+    )
 
     model_embed = model.Embed(
         uid=embed_unique_id,
@@ -162,7 +163,7 @@ def _get_embed(embed: discord.Embed) -> model.Embed:
         model_embed.fields.append(
             model.EmbedField(
                 uid=snowflake.hash_object_to_snowflake(
-                    [field.name, field.value, field.inline]
+                    [field.name, field.value, field.inline], global_unique=False
                 ),
                 name=field.name,
                 value=field.value,
@@ -181,7 +182,7 @@ def _get_embed_media(media) -> model.EmbedMedia:
         _embed_value_or_none(media.height),
     ]
     return model.EmbedMedia(
-        uid=snowflake.hash_object_to_snowflake(obj),
+        uid=snowflake.hash_object_to_snowflake(obj, global_unique=False),
         url=obj[0],
         proxy_url=obj[1],
         width=obj[2],
