@@ -11,7 +11,6 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from model.channel_mentions import channel_mentions_table
-from model.message_reacts import message_reacts_table
 from model.role_mentions import role_mentions_table
 from model.sent_sticker import sent_sticker_table
 from model.user_mentions import user_mentions_table
@@ -47,6 +46,7 @@ class Message(Base):
 
     embeds = relationship("Embed", back_populates="message")
     attachments = relationship("Attachment", back_populates="message")
+    reactions = relationship("Reaction", back_populates="message")
 
     mention_users = relationship(
         "User", secondary=user_mentions_table, back_populates="mentions"
@@ -56,9 +56,6 @@ class Message(Base):
     )
     mention_channels = relationship(
         "Channel", secondary=channel_mentions_table, back_populates="mentions"
-    )
-    reactions = relationship(
-        "Emoji", secondary=message_reacts_table, back_populates="messages"
     )
     stickers = relationship(
         "Sticker", secondary=sent_sticker_table, back_populates="messages"

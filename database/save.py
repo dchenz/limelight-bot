@@ -3,7 +3,7 @@ from typing import Optional, Union
 import discord
 import model
 
-from database import Session
+from database import Session, emoji_map
 
 
 def save_discord_message(message: discord.Message):
@@ -19,9 +19,17 @@ def save_discord_message(message: discord.Message):
         r = _get_role(role)
         model_message.mention_roles.append(r)
 
+    for sticker in message.stickers:
+        s = _get_sticker(sticker)
+        model_message.stickers.append(s)
+
     with Session() as session:
 
         session.merge(model_message)
+
+        for react in message.reactions:
+            r = _get_reaction(react, model_message)
+            session.merge(r)
 
         for embed in message.embeds:
             e = _get_embed(embed)
@@ -193,3 +201,43 @@ def _get_role(role: discord.Role) -> model.Role:
     """Convert a discord role into its model object"""
 
     return model.Role(uid=role.id, name=role.name, color=role.color.value)
+
+
+def _get_reaction(
+    reaction: discord.Reaction, model_message: model.Message
+) -> model.Reaction:
+    """Convert a discord reaction into its model object"""
+
+    model_react = model.Reaction(
+        message=model_message, emoji=_get_emoji(reaction.emoji), count=reaction.count
+    )
+
+    return model_react
+
+
+def _get_emoji(emoji: Union[discord.Emoji, discord.PartialEmoji, str]) -> model.Emoji:
+    """Convert a discord emoji into its model object"""
+
+    if isinstance(emoji, str):
+        emoji_id = emoji_map.unicode_to_unique_id(emoji)
+        emoji_name = emoji_map.unicode_to_name(emoji)
+        emoji_url = emoji_map.unicode_to_asset(emoji)
+        is_custom = False
+    else:
+        emoji_id = emoji.id
+        emoji_name = emoji.name
+        emoji_url = emoji.url
+        is_custom = True
+
+    return model.Emoji(uid=emoji_id, name=emoji_name, url=emoji_url, custom=is_custom)
+
+
+def _get_sticker(sticker: discord.Sticker) -> model.Sticker:
+    """Convert a discord sticker into its model object"""
+
+    return model.Sticker(
+        uid=sticker.id,
+        name=sticker.name,
+        format_type=sticker.format,
+        image_url=sticker.image_url,
+    )

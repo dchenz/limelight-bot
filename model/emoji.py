@@ -1,25 +1,17 @@
 from database import Base
-from sqlalchemy import BigInteger, Boolean, Column, Integer, String
+from sqlalchemy import BigInteger, Boolean, Column, String
 from sqlalchemy.orm import relationship
-
-from model.message_reacts import message_reacts_table
 
 
 class Emoji(Base):
     __tablename__ = "discord_emoji"
 
-    uid = Column(Integer, primary_key=True)
+    # For custom emojis, this is Discord's 18-digit ID.
+    # For default emojis, this is a hash of its unicode value(s).
+    uid = Column(BigInteger, primary_key=True)
 
+    name = Column(String, nullable=False, unique=True)
+    url = Column(String, nullable=False)
     custom = Column(Boolean, nullable=False)
 
-    # Not NULL when custom is True
-    custom_id = Column(BigInteger)
-    custom_name = Column(String)
-    custom_url = Column(String)
-
-    # Not NULL when custom is False
-    unicode = Column(String)
-
-    messages = relationship(
-        "Message", secondary=message_reacts_table, back_populates="reactions"
-    )
+    reactions = relationship("Reaction", back_populates="emoji")
