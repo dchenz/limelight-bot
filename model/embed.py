@@ -16,7 +16,7 @@ class Embed(Base):
 
     __tablename__ = "discord_message_embed"
 
-    uid = Column(Integer, primary_key=True)
+    uid = Column(BigInteger, primary_key=True)
 
     title = Column(String)
     variant = Column(String)
@@ -26,12 +26,12 @@ class Embed(Base):
     color = Column(Integer)
 
     message_id = Column(BigInteger, ForeignKey("discord_message.uid"), nullable=False)
-    image_id = Column(Integer, ForeignKey("discord_message_embed_media.uid"))
-    video_id = Column(Integer, ForeignKey("discord_message_embed_media.uid"))
-    thumbnail_id = Column(Integer, ForeignKey("discord_message_embed_media.uid"))
-    provider_id = Column(Integer, ForeignKey("discord_message_embed_provider.uid"))
-    author_id = Column(Integer, ForeignKey("discord_message_embed_author.uid"))
-    footer_id = Column(Integer, ForeignKey("discord_message_embed_footer.uid"))
+    image_id = Column(BigInteger, ForeignKey("discord_message_embed_media.uid"))
+    video_id = Column(BigInteger, ForeignKey("discord_message_embed_media.uid"))
+    thumbnail_id = Column(BigInteger, ForeignKey("discord_message_embed_media.uid"))
+    provider_id = Column(BigInteger, ForeignKey("discord_message_embed_provider.uid"))
+    author_id = Column(BigInteger, ForeignKey("discord_message_embed_author.uid"))
+    footer_id = Column(BigInteger, ForeignKey("discord_message_embed_footer.uid"))
 
     message = relationship("Message", back_populates="embeds")
     image = relationship("EmbedMedia", uselist=False, foreign_keys=[image_id])
@@ -49,7 +49,7 @@ class EmbedMedia(Base):
 
     __tablename__ = "discord_message_embed_media"
 
-    uid = Column(Integer, primary_key=True)
+    uid = Column(BigInteger, primary_key=True)
 
     url = Column(String)
     proxy_url = Column(String)
@@ -62,7 +62,7 @@ class EmbedProvider(Base):
 
     __tablename__ = "discord_message_embed_provider"
 
-    uid = Column(Integer, primary_key=True)
+    uid = Column(BigInteger, primary_key=True)
 
     name = Column(String)
     url = Column(String)
@@ -73,7 +73,7 @@ class EmbedAuthor(Base):
 
     __tablename__ = "discord_message_embed_author"
 
-    uid = Column(Integer, primary_key=True)
+    uid = Column(BigInteger, primary_key=True)
 
     name = Column(String, nullable=False)
     url = Column(String)
@@ -86,7 +86,7 @@ class EmbedFooter(Base):
 
     __tablename__ = "discord_message_embed_footer"
 
-    uid = Column(Integer, primary_key=True)
+    uid = Column(BigInteger, primary_key=True)
 
     text = Column(String, nullable=False)
     url = Column(String)
@@ -99,10 +99,12 @@ class EmbedField(Base):
 
     __tablename__ = "discord_message_embed_field"
 
-    uid = Column(Integer, primary_key=True)
+    uid = Column(BigInteger, primary_key=True)
 
     name = Column(String, nullable=False)
     value = Column(String)
     inline = Column(Boolean)
 
-    embed_id = Column(Integer, ForeignKey("discord_message_embed.uid"), nullable=False)
+    embed_id = Column(
+        BigInteger, ForeignKey("discord_message_embed.uid"), nullable=False
+    )

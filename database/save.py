@@ -3,7 +3,7 @@ from typing import Optional, Union
 import discord
 import model
 
-from database import Session, emoji_map
+from database import Session, emoji_map, snowflake
 
 
 def save_discord_message(message: discord.Message):
@@ -23,9 +23,9 @@ def save_discord_message(message: discord.Message):
 
         session.merge(model_message)
 
-        for react in message.reactions:
-            r = _get_reaction(react, model_message)
-            session.merge(r)
+        # for react in message.reactions:
+        #     r = _get_reaction(react, model_message)
+        #     session.merge(r)
 
         for embed in message.embeds:
             e = _get_embed(embed)
@@ -107,7 +107,13 @@ def _get_replied_to_message(
 def _get_embed(embed: discord.Embed) -> model.Embed:
     """Convert a discord message embed into its model object"""
 
+    # This ID will be shared across some embed subtables,
+    # such as model.EmbedFooter, because they are 1-1 mapping
+    # and only exist if model.Embed exists.
+    embed_unique_id = snowflake.hash_object_to_snowflake(embed.to_dict())
+
     model_embed = model.Embed(
+        uid=embed_unique_id,
         title=_embed_value_or_none(embed.title),
         variant=_embed_value_or_none(embed.type),
         description=_embed_value_or_none(embed.description),
@@ -119,37 +125,24 @@ def _get_embed(embed: discord.Embed) -> model.Embed:
         model_embed.color = embed.color.value  # type: ignore
 
     if embed.image:
-        model_embed.image = model.EmbedMedia(
-            url=_embed_value_or_none(embed.image.url),
-            proxy_url=_embed_value_or_none(embed.image.proxy_url),
-            width=_embed_value_or_none(embed.image.width),
-            height=_embed_value_or_none(embed.image.height),
-        )
+        model_embed.image = _get_embed_media(embed.image)
 
     if embed.video:
-        model_embed.video = model.EmbedMedia(
-            url=_embed_value_or_none(embed.video.url),
-            proxy_url=_embed_value_or_none(embed.video.proxy_url),
-            width=_embed_value_or_none(embed.video.width),
-            height=_embed_value_or_none(embed.video.height),
-        )
+        model_embed.video = _get_embed_media(embed.video)
 
     if embed.thumbnail:
-        model_embed.thumbnail = model.EmbedMedia(
-            url=_embed_value_or_none(embed.thumbnail.url),
-            proxy_url=_embed_value_or_none(embed.thumbnail.proxy_url),
-            width=_embed_value_or_none(embed.thumbnail.width),
-            height=_embed_value_or_none(embed.thumbnail.height),
-        )
+        model_embed.thumbnail = _get_embed_media(embed.thumbnail)
 
     if embed.provider:
         model_embed.provider = model.EmbedProvider(
+            uid=embed_unique_id,
             name=_embed_value_or_none(embed.provider.name),
             url=_embed_value_or_none(embed.provider.ur),
         )
 
     if embed.author:
         model_embed.author = model.EmbedAuthor(
+            uid=embed_unique_id,
             name=_embed_value_or_none(embed.author.name),
             url=_embed_value_or_none(embed.author.url),
             icon_url=_embed_value_or_none(embed.author.icon_url),
@@ -158,6 +151,7 @@ def _get_embed(embed: discord.Embed) -> model.Embed:
 
     if embed.footer:
         model_embed.footer = model.EmbedFooter(
+            uid=embed_unique_id,
             text=_embed_value_or_none(embed.footer.text),
             url=_embed_value_or_none(embed.footer.url),
             icon_url=_embed_value_or_none(embed.footer.icon_url),
@@ -166,10 +160,33 @@ def _get_embed(embed: discord.Embed) -> model.Embed:
 
     for field in embed.fields:
         model_embed.fields.append(
-            model.EmbedField(name=field.name, value=field.value, inline=field.inline)
+            model.EmbedField(
+                uid=snowflake.hash_object_to_snowflake(
+                    [field.name, field.value, field.inline]
+                ),
+                name=field.name,
+                value=field.value,
+                inline=field.inline,
+            )
         )
 
     return model_embed
+
+
+def _get_embed_media(media) -> model.EmbedMedia:
+    obj = [
+        _embed_value_or_none(media.url),
+        _embed_value_or_none(media.proxy_url),
+        _embed_value_or_none(media.width),
+        _embed_value_or_none(media.height),
+    ]
+    return model.EmbedMedia(
+        uid=snowflake.hash_object_to_snowflake(obj),
+        url=obj[0],
+        proxy_url=obj[1],
+        width=obj[2],
+        height=obj[3],
+    )
 
 
 def _embed_value_or_none(embed_value):
