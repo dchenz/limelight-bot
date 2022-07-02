@@ -19,10 +19,6 @@ def save_discord_message(message: discord.Message):
         r = _get_role(role)
         model_message.mention_roles.append(r)
 
-    for sticker in message.stickers:
-        s = _get_sticker(sticker)
-        model_message.stickers.append(s)
-
     with Session() as session:
 
         session.merge(model_message)
@@ -230,14 +226,3 @@ def _get_emoji(emoji: Union[discord.Emoji, discord.PartialEmoji, str]) -> model.
         is_custom = True
 
     return model.Emoji(uid=emoji_id, name=emoji_name, url=emoji_url, custom=is_custom)
-
-
-def _get_sticker(sticker: discord.Sticker) -> model.Sticker:
-    """Convert a discord sticker into its model object"""
-
-    return model.Sticker(
-        uid=sticker.id,
-        name=sticker.name,
-        format_type=sticker.format,
-        image_url=sticker.image_url,
-    )

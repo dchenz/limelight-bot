@@ -12,7 +12,6 @@ from sqlalchemy.orm import relationship
 
 from model.channel_mentions import channel_mentions_table
 from model.role_mentions import role_mentions_table
-from model.sent_sticker import sent_sticker_table
 from model.user_mentions import user_mentions_table
 
 
@@ -56,7 +55,4 @@ class Message(Base):
     )
     mention_channels = relationship(
         "Channel", secondary=channel_mentions_table, back_populates="mentions"
-    )
-    stickers = relationship(
-        "Sticker", secondary=sent_sticker_table, back_populates="messages"
     )
