@@ -15,6 +15,9 @@ MAX_YEAR = 2084
 
 BIT_MASK_22 = 0x3FFFFF
 
+# Sqlite3 max positive int is 2 ** 63 - 1
+BIT_MASK_63 = 0x7FFFFFFFFFFFFFFF
+
 
 def hash_to_snowflake(content: str, global_unique: bool = True) -> int:
     """
@@ -50,16 +53,17 @@ def hash_to_snowflake(content: str, global_unique: bool = True) -> int:
         snowflake_ts = int(distant_future.timestamp() * 1000) - DISCORD_EPOCH
         # Bits 22..0 (22 bits)
         snowflake_n = int.from_bytes(content_hash[-3:], "big") & BIT_MASK_22
+        # The value should be less than 2 ** 63 - 1 with the chosen inputs
         return (snowflake_ts << 22) | snowflake_n
 
-    return int.from_bytes(content_hash[:8], "big")
+    return int.from_bytes(content_hash[:8], "big") & BIT_MASK_63
 
 
-def hash_object_to_snowflake(obj) -> int:
+def hash_object_to_snowflake(obj, global_unique: bool = True) -> int:
     """
     Generate an 8-byte Discord snowflake by hashing the object's representation.
     Raises TypeError if object cannot be hashed.
     """
 
     rep = json.dumps(obj, sort_keys=True)
-    return hash_to_snowflake(rep)
+    return hash_to_snowflake(rep, global_unique)
