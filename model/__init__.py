@@ -5,4 +5,5 @@ from model.emoji import *
 from model.message import *
 from model.reaction import *
 from model.role import *
+from model.sticker import *
 from model.user import *

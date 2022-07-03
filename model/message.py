@@ -12,6 +12,7 @@ from sqlalchemy.orm import relationship
 
 from model.channel_mentions import channel_mentions_table
 from model.role_mentions import role_mentions_table
+from model.sent_sticker import sent_sticker_table
 from model.user_mentions import user_mentions_table
 
 
@@ -34,14 +35,15 @@ class Message(Base):
     variant = Column(Integer, nullable=False)
 
     author_id = Column(BigInteger, ForeignKey("discord_user.uid"), nullable=False)
-    channel_id = Column(BigInteger, ForeignKey("discord_channel.uid"), nullable=False)
-    replied_to_id = Column(BigInteger, ForeignKey("discord_message.uid"))
-    replied_to_deleted = Column(Boolean, nullable=False)
+    channel_id = Column(BigInteger, ForeignKey("discord_channel.uid"))
+    reference_id = Column(BigInteger, ForeignKey("discord_message.uid"))
 
     author = relationship("User", back_populates="messages")
     channel = relationship("Channel", back_populates="messages")
-    replied_to = relationship("Message", back_populates="replied_by", remote_side=[uid])
-    replied_by = relationship("Message", back_populates="replied_to")
+    reference = relationship(
+        "Message", back_populates="referenced_by", remote_side=[uid]
+    )
+    referenced_by = relationship("Message", back_populates="reference")
 
     embeds = relationship("Embed", back_populates="message")
     attachments = relationship("Attachment", back_populates="message")
@@ -55,4 +57,7 @@ class Message(Base):
     )
     mention_channels = relationship(
         "Channel", secondary=channel_mentions_table, back_populates="mentions"
+    )
+    stickers = relationship(
+        "Sticker", secondary=sent_sticker_table, back_populates="messages"
     )

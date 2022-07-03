@@ -11,6 +11,7 @@ class LimelightBot(discord.Client):
     def __init__(self, prefix, allowed_users=None, ignored_channels=None):
         bot_intents = discord.Intents.default()
         bot_intents.messages = True
+        bot_intents.message_content = True
         super().__init__(intents=bot_intents)
         self.prefix = prefix
         # By default, no users can run commands

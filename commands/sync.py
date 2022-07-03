@@ -15,28 +15,39 @@ class SyncController:
     """
 
     def __init__(self, max_concurrent: int):
-        self.sync_sem = asyncio.Semaphore(max_concurrent)
+        self.max_concurrent = max_concurrent
+        self.sync_lock = asyncio.Lock()
 
     def start_downloading(self, channels: list[discord.TextChannel]):
         # Check for currently running jobs here
         # and return immediately
         loop = asyncio.get_event_loop()
-        loop.create_task(self._download_channels(channels[::-1]))
+        loop.create_task(self._download_channels(channels))
 
     async def _download_channels(self, channels: list[discord.TextChannel]):
+        if self.sync_lock.locked():
+            return
+        await self.sync_lock.acquire()
         print("starting download sync")
-        await asyncio.gather(*[self._download_channel(c) for c in channels])
+        sync_sem = asyncio.Semaphore(self.max_concurrent)
+        await asyncio.gather(*[self._download_channel(c, sync_sem) for c in channels])
+        self.sync_lock.release()
         print("done")
 
-    async def _download_channel(self, channel: discord.TextChannel):
-        await self.sync_sem.acquire()
+    async def _download_channel(
+        self, channel: discord.TextChannel, sem: asyncio.Semaphore
+    ):
+        await sem.acquire()
         print("downloading", channel.name)
-        async for message in channel.history(limit=None):  # type: ignore
+        async for message in channel.history(limit=None):
             save_discord_message(message)
-        self.sync_sem.release()
+        for thread in channel.threads:
+            print("- downloading", thread.name)
+            async for message in thread.history(limit=None):
+                save_discord_message(message)
+            print("- finished", thread.name)
+        sem.release()
         print("finished", channel.name)
-
-    # async def _download_message(self, )
 
 
 sync_controller = SyncController(max_concurrent=2)

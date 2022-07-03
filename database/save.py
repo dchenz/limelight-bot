@@ -24,9 +24,13 @@ def save_discord_message(message: discord.Message):
         r = _get_role(role)
         model_message.mention_roles.append(r)
 
-    for channel in message.channel_mentions:  # type: ignore
+    for channel in message.channel_mentions:
         c = _get_channel(channel)
         model_message.mention_channels.append(c)
+
+    for sticker in message.stickers:
+        s = _get_sticker(sticker)
+        model_message.stickers.append(s)
 
     for embed in message.embeds:
         e = _get_embed(embed)
@@ -36,6 +40,7 @@ def save_discord_message(message: discord.Message):
 
         session.merge(model_message)
 
+        # Does not work if reaction PK already added to db
         for react in message.reactions:
             r = _get_reaction(react, model_message)
             session.merge(r)
@@ -46,13 +51,9 @@ def save_discord_message(message: discord.Message):
 def _get_message(message: discord.Message) -> model.Message:
     """Convert a discord message into its model object"""
 
-    unknown_replied_to = _get_replied_to_message(message)
-    model_replied_to = None
-    replied_to_deleted = False
-    if isinstance(unknown_replied_to, discord.Message):
-        model_replied_to = _get_message(unknown_replied_to)
-    elif isinstance(unknown_replied_to, discord.DeletedReferencedMessage):
-        replied_to_deleted = True
+    reference = None
+    if message.reference is not None:
+        reference = _get_message_ref(message.reference)
 
     model_message = model.Message(
         uid=message.id,
@@ -61,51 +62,70 @@ def _get_message(message: discord.Message) -> model.Message:
         tts=message.tts,
         mention_everyone=message.mention_everyone,
         pinned=message.pinned,
-        content=message.content,
+        content=message.system_content,
         jump_url=message.jump_url,
         flags=message.flags.value,
         variant=message.type.value,
-        author=_get_user(message.author),  # type: ignore
-        channel=_get_channel(message.channel),
-        replied_to=model_replied_to,
-        replied_to_deleted=replied_to_deleted,
+        author=_get_user(message.author),
+        channel=_get_channel(message.channel),  # type: ignore
+        reference=reference,
     )
 
     return model_message
 
 
-def _get_user(user: discord.User) -> model.User:
+def _get_user(user: Union[discord.Member, discord.User]) -> model.User:
     """Convert a discord message's author into its model object"""
 
     return model.User(
         uid=user.id,
         username=f"{user.name}#{user.discriminator}",
         bot=user.bot,
-        avatar_url=str(user.avatar_url),
+        avatar_url=str(user.display_avatar),
     )
 
 
-def _get_channel(channel: discord.TextChannel) -> model.Channel:
-    """Convert a discord message's channel into its model object"""
+def _get_channel(
+    channel: Union[discord.abc.GuildChannel, discord.Thread]
+) -> model.Channel:
+    """Convert a discord message's channel/thread into its model object"""
 
-    return model.Channel(uid=channel.id, name=channel.name)
+    if isinstance(channel, discord.TextChannel):
+        return model.Channel(uid=channel.id, name=channel.name, thread=False)
+
+    if isinstance(channel, discord.Thread):
+        thread = channel
+        return model.Channel(
+            uid=thread.id,
+            name=thread.name,
+            thread=True,
+            thread_archived=thread.archived,
+        )
+
+    raise ValueError("Unsupported object: " + str(channel))
 
 
-def _get_replied_to_message(
-    message: discord.Message,
-) -> (Optional[Union[discord.Message, discord.DeletedReferencedMessage]]):
-    """
-    If a discord message replies to a message,
-    convert the other message into its model object
-    """
+def _get_message_ref(ref: discord.MessageReference) -> Optional[model.Message]:
+    """Convert a discord message's reference into its model object"""
 
-    ref = message.reference
-    is_system = message.type != discord.MessageType.default
-    if is_system or ref is None:
-        return None
-    if ref.cached_message:
-        return ref.cached_message
-    return ref.resolved
+    if ref.cached_message is not None:
+        return _get_message(ref.cached_message)
+    if ref.resolved is not None and not isinstance(
+        ref.resolved, discord.DeletedReferencedMessage
+    ):
+        return _get_message(ref.resolved)
+    return None
+
+
+def _get_sticker(sticker: discord.StickerItem) -> model.Sticker:
+    """Convert a discord sticker into its model object"""
+
+    return model.Sticker(
+        uid=sticker.id,
+        name=sticker.name,
+        content_type=sticker.format.name,
+        url=sticker.url,
+    )
 
 
 def _get_embed(embed: discord.Embed) -> model.Embed:
@@ -120,11 +140,11 @@ def _get_embed(embed: discord.Embed) -> model.Embed:
 
     model_embed = model.Embed(
         uid=embed_unique_id,
-        title=_embed_value_or_none(embed.title),
-        variant=_embed_value_or_none(embed.type),
-        description=_embed_value_or_none(embed.description),
-        url=_embed_value_or_none(embed.url),
-        timestamp=_embed_value_or_none(embed.timestamp),
+        title=embed.title,
+        variant=embed.type,
+        description=embed.description,
+        url=embed.url,
+        timestamp=embed.timestamp,
     )
 
     if embed.color:
@@ -142,26 +162,23 @@ def _get_embed(embed: discord.Embed) -> model.Embed:
     if embed.provider:
         model_embed.provider = model.EmbedProvider(
             uid=embed_unique_id,
-            name=_embed_value_or_none(embed.provider.name),
-            url=_embed_value_or_none(embed.provider.ur),
+            name=embed.provider.name,
+            url=embed.provider.url,
         )
 
     if embed.author:
         model_embed.author = model.EmbedAuthor(
             uid=embed_unique_id,
-            name=_embed_value_or_none(embed.author.name),
-            url=_embed_value_or_none(embed.author.url),
-            icon_url=_embed_value_or_none(embed.author.icon_url),
-            proxy_icon_url=_embed_value_or_none(embed.author.proxy_icon_url),
+            name=embed.author.name,
+            url=embed.author.url,
+            icon_url=embed.author.icon_url,
         )
 
     if embed.footer:
         model_embed.footer = model.EmbedFooter(
             uid=embed_unique_id,
-            text=_embed_value_or_none(embed.footer.text),
-            url=_embed_value_or_none(embed.footer.url),
-            icon_url=_embed_value_or_none(embed.footer.icon_url),
-            proxy_icon_url=_embed_value_or_none(embed.footer.proxy_icon_url),
+            text=embed.footer.text,
+            icon_url=embed.footer.icon_url,
         )
 
     for field in embed.fields:
@@ -181,10 +198,10 @@ def _get_embed(embed: discord.Embed) -> model.Embed:
 
 def _get_embed_media(media) -> model.EmbedMedia:
     obj = [
-        _embed_value_or_none(media.url),
-        _embed_value_or_none(media.proxy_url),
-        _embed_value_or_none(media.width),
-        _embed_value_or_none(media.height),
+        getattr(media, "url", None),
+        getattr(media, "proxy_url", None),
+        getattr(media, "width", None),
+        getattr(media, "height", None),
     ]
     return model.EmbedMedia(
         uid=snowflake.hash_object_to_snowflake(obj, global_unique=False),
@@ -193,12 +210,6 @@ def _get_embed_media(media) -> model.EmbedMedia:
         width=obj[2],
         height=obj[3],
     )
-
-
-def _embed_value_or_none(embed_value):
-    if embed_value == discord.Embed.Empty:
-        return None
-    return embed_value
 
 
 def _get_attachment(attachment: discord.Attachment) -> model.Attachment:
@@ -227,8 +238,10 @@ def _get_reaction(
 ) -> model.Reaction:
     """Convert a discord reaction into its model object"""
 
+    model_emoji = _get_emoji(reaction.emoji)
+
     model_react = model.Reaction(
-        message=model_message, emoji=_get_emoji(reaction.emoji), count=reaction.count
+        message=model_message, emoji=model_emoji, count=reaction.count
     )
 
     return model_react

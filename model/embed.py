@@ -78,7 +78,6 @@ class EmbedAuthor(Base):
     name = Column(String, nullable=False)
     url = Column(String)
     icon_url = Column(String)
-    proxy_icon_url = Column(String)
 
 
 class EmbedFooter(Base):
@@ -89,9 +88,7 @@ class EmbedFooter(Base):
     uid = Column(BigInteger, primary_key=True)
 
     text = Column(String, nullable=False)
-    url = Column(String)
     icon_url = Column(String)
-    proxy_icon_url = Column(String)
 
 
 class EmbedField(Base):
