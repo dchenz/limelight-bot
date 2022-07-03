@@ -16,9 +16,17 @@ def save_discord_message(message: discord.Message):
         a = _get_attachment(atch)
         model_message.attachments.append(a)
 
+    for user in message.mentions:
+        u = _get_user(user)
+        model_message.mention_users.append(u)
+
     for role in message.role_mentions:
         r = _get_role(role)
         model_message.mention_roles.append(r)
+
+    for channel in message.channel_mentions:  # type: ignore
+        c = _get_channel(channel)
+        model_message.mention_channels.append(c)
 
     for embed in message.embeds:
         e = _get_embed(embed)
@@ -37,9 +45,6 @@ def save_discord_message(message: discord.Message):
 
 def _get_message(message: discord.Message) -> model.Message:
     """Convert a discord message into its model object"""
-
-    model_author = _get_author(message)
-    model_channel = _get_channel(message)
 
     unknown_replied_to = _get_replied_to_message(message)
     model_replied_to = None
@@ -60,8 +65,8 @@ def _get_message(message: discord.Message) -> model.Message:
         jump_url=message.jump_url,
         flags=message.flags.value,
         variant=message.type.value,
-        author=model_author,
-        channel=model_channel,
+        author=_get_user(message.author),  # type: ignore
+        channel=_get_channel(message.channel),
         replied_to=model_replied_to,
         replied_to_deleted=replied_to_deleted,
     )
@@ -69,22 +74,21 @@ def _get_message(message: discord.Message) -> model.Message:
     return model_message
 
 
-def _get_author(message: discord.Message) -> model.User:
+def _get_user(user: discord.User) -> model.User:
     """Convert a discord message's author into its model object"""
 
-    u: discord.User = message.author  # type: ignore
     return model.User(
-        uid=u.id,
-        username=f"{u.name}#{u.discriminator}",
-        bot=u.bot,
-        avatar_url=str(u.avatar_url),
+        uid=user.id,
+        username=f"{user.name}#{user.discriminator}",
+        bot=user.bot,
+        avatar_url=str(user.avatar_url),
     )
 
 
-def _get_channel(message: discord.Message) -> model.Channel:
+def _get_channel(channel: discord.TextChannel) -> model.Channel:
     """Convert a discord message's channel into its model object"""
 
-    return model.Channel(uid=message.channel.id, name=message.channel.name)
+    return model.Channel(uid=channel.id, name=channel.name)
 
 
 def _get_replied_to_message(
