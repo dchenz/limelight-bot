@@ -48,7 +48,8 @@ def hash_to_snowflake(content: str, global_unique: bool = True) -> int:
         hour = int(content_hash[3]) % 24
         minutes = int(content_hash[4]) % 60
         seconds = int(content_hash[5]) % 60
-        distant_future = datetime(year, month, day, hour, minutes, seconds, 0)
+        micros = int.from_bytes(content_hash[6:9], "big") % 1000000
+        distant_future = datetime(year, month, day, hour, minutes, seconds, micros)
         # Bits 64..22 (42 bits)
         snowflake_ts = int(distant_future.timestamp() * 1000) - DISCORD_EPOCH
         # Bits 22..0 (22 bits)
