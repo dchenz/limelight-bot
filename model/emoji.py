@@ -8,7 +8,7 @@ class Emoji(Base):
 
     uid = Column(BigInteger, primary_key=True)
 
-    name = Column(String, nullable=False, unique=True)
+    name = Column(String, nullable=False)
     url = Column(String, nullable=False)
     custom = Column(Boolean, nullable=False)
 
