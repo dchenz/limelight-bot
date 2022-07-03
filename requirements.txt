@@ -3,7 +3,6 @@ async-timeout==3.0.1
 attrs==21.4.0
 chardet==4.0.0
 discord==1.7.3
-discord-emoji==1.3.2
 discord.py==1.7.3
 greenlet==1.1.2
 idna==3.3
@@ -11,4 +10,6 @@ multidict==6.0.2
 python-dotenv==0.20.0
 SQLAlchemy==1.4.39
 typing_extensions==4.2.0
+wheel==0.37.1
 yarl==1.7.2
+git+https://github.com/dchenz/discord-emoji

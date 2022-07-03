@@ -1,9 +1,10 @@
 from typing import Optional, Union
 
 import discord
+import discord_emoji
 import model
 
-from database import Session, emoji_map, snowflake
+from database import Session, snowflake
 
 
 def save_discord_message(message: discord.Message):
@@ -235,8 +236,8 @@ def _get_emoji(emoji: Union[discord.Emoji, discord.PartialEmoji, str]) -> model.
     if isinstance(emoji, str):
         # Unicode emojis will exist in same table as custom emojis which have real snowflakes
         emoji_id = snowflake.hash_to_snowflake(emoji, global_unique=True)
-        emoji_name = emoji_map.unicode_to_name(emoji)
-        emoji_url = emoji_map.unicode_to_asset(emoji)
+        emoji_name = discord_emoji.unicode_to_name(emoji)
+        emoji_url = discord_emoji.unicode_to_image(emoji)
         is_custom = False
     else:
         emoji_id = emoji.id
