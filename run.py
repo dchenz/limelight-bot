@@ -3,6 +3,9 @@ from discord import Intents
 from discord.ext import commands
 from schema import Optional, Schema
 
+# Required to initialize sqlalchemy models.
+# pylint: disable=unused-import
+import model
 from database import init_database
 
 config_schema = Schema(
