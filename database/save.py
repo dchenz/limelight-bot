@@ -34,6 +34,9 @@ def save_discord_message(message: discord.Message):
         session.merge(model_message)
 
         # Does not work if reaction PK already added to db
+        session.query(model.Reaction).filter(
+            model.Reaction.message_id == model_message.uid
+        ).delete()
         for react in message.reactions:
             r = _get_reaction(react, model_message)
             session.merge(r)
