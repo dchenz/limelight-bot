@@ -1,4 +1,15 @@
-SQLAlchemy==1.4.39
+aiohttp==3.9.1
+aiosignal==1.3.1
+async-timeout==4.0.3
+attrs==23.1.0
+contextlib2==21.6.0
+discord-emoji @ git+https://github.com/dchenz/discord-emoji@63b56516f5c70d2db59bc817773bea08dba3c54e
+discord.py @ git+https://github.com/Rapptz/discord.py@d25b574b3240e4490af6dd694e1d0b9ac30cff3e
+frozenlist==1.4.1
+greenlet==3.0.3
+idna==3.6
+multidict==6.0.4
+PyYAML==6.0.1
 schema==0.7.5
-git+https://github.com/Rapptz/discord.py
-git+https://github.com/dchenz/discord-emoji
+SQLAlchemy==1.4.39
+yarl==1.9.4
