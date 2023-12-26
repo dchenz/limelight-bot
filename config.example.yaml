@@ -1,0 +1,5 @@
+token: my token
+allowed_users:
+  - 123
+ignored_channels:
+  - 456
