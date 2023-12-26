@@ -1,8 +1,8 @@
 from sqlalchemy import BigInteger, Boolean, CheckConstraint, Column, String
 from sqlalchemy.orm import relationship
 
-from bot.database import Base
-from bot.model.channel_mentions import channel_mentions_table
+from database import Base
+from model.channel_mentions import channel_mentions_table
 
 
 class Channel(Base):

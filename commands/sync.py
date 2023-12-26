@@ -3,8 +3,8 @@ from argparse import Namespace
 
 import discord
 
-from bot.commands.parsing import CommandParser, get_channel_id
-from bot.database.save import save_discord_message
+from commands.parsing import CommandParser, get_channel_id
+from database.save import save_discord_message
 
 
 class SyncController:

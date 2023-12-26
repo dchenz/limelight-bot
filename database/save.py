@@ -3,8 +3,8 @@ from typing import Optional, Union
 import discord
 import discord_emoji
 
-from bot import model
-from bot.database import Session, snowflake
+import model
+from database import Session, snowflake
 
 
 def save_discord_message(message: discord.Message):

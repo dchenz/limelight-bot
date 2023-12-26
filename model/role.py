@@ -1,8 +1,8 @@
 from sqlalchemy import BigInteger, Column, Integer, String
 from sqlalchemy.orm import relationship
 
-from bot.database import Base
-from bot.model.role_mentions import role_mentions_table
+from database import Base
+from model.role_mentions import role_mentions_table
 
 
 class Role(Base):

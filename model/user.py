@@ -1,8 +1,8 @@
 from sqlalchemy import BigInteger, Boolean, Column, String
 from sqlalchemy.orm import relationship
 
-from bot.database import Base
-from bot.model.user_mentions import user_mentions_table
+from database import Base
+from model.user_mentions import user_mentions_table
 
 
 class User(Base):

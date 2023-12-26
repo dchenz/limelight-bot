@@ -9,7 +9,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from bot.database import Base
+from database import Base
 
 
 class Embed(Base):
