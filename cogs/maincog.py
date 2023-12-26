@@ -1,4 +1,4 @@
-from discord import Message
+from discord import Interaction, Message, app_commands
 from discord.ext import commands
 
 from database.downloader import MessageDownloader
@@ -16,10 +16,9 @@ class MainCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        await self.bot.tree.sync()
         print("----------------")
         print("Bot started")
-        print("----------------")
-        print(f"Prefix: {self.bot.command_prefix}")
         print("----------------")
 
     @commands.Cog.listener()
@@ -28,4 +27,10 @@ class MainCog(commands.Cog):
             return
         if message.guild is None:
             return
-        await self.message_downloader.schedule_download(message)
+        await self.message_downloader.download_message(message)
+
+    @app_commands.command(description="Download messages in the current channel")
+    async def download(self, interaction: Interaction):
+        if interaction.channel:
+            self.message_downloader.download_channel(interaction.channel)
+            await interaction.response.send_message("Channel download has started")
