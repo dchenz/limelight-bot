@@ -1,8 +1,5 @@
 token: my token
 
-allowed_users:
-  - 123
-
 database:
   connection_string: sqlite:///relative/path
   debug: false

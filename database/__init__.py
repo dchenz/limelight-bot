@@ -1,6 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, scoped_session, sessionmaker
 
+# Required to initialize sqlalchemy models.
+# pylint: disable=unused-import
+import model
+
 Base = declarative_base()
 session_maker = sessionmaker()
 Session = scoped_session(session_maker)
