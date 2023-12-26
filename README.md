@@ -19,10 +19,5 @@ python3 run.py
 
 ## Commands
 
-```
-PREFIX sync start [--with-channels|--without-channels]
-```
-- Starts a sync job that downloads all messages in the specified channels
-- If ``--with-channels`` is not specified, the bot will target all channels where it has read/history permissions.
-- The two options are mutually-exclusive and cannot be used together.
-- Channel IDs can be supplied as an integer (98765432123456) or by tagging the channel (#general).
+- `/download`: Download messages in the current channel
+- `/pending`: Show pending channel downloads
