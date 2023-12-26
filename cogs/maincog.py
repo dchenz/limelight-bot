@@ -1,7 +1,7 @@
 from discord import Message
 from discord.ext import commands
 
-from database.save import save_discord_message
+from database.downloader import MessageDownloader
 
 
 async def setup(bot: commands.Bot):
@@ -11,6 +11,8 @@ async def setup(bot: commands.Bot):
 class MainCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.message_downloader = MessageDownloader()
+        self.message_downloader.start_worker()
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -26,4 +28,4 @@ class MainCog(commands.Cog):
             return
         if message.guild is None:
             return
-        save_discord_message(message)
+        await self.message_downloader.schedule_download(message)
