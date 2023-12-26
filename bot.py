@@ -11,6 +11,7 @@ def load_config():
             "allowed_users": [int],
             "ignored_channels": [int],
             "database": {"connection_string": str, "debug": bool},
+            "bot_prefix": str
         }
     )
     with open("./config.yaml") as f:
@@ -24,7 +25,7 @@ if __name__ == "__main__":
         debug=config["database"]["debug"],
     )
     bot = LimelightBot(
-        "&lime",
+        prefix=config["bot_prefix"],
         allowed_users=config["allowed_users"],
         ignored_channels=config["ignored_channels"],
     )
