@@ -45,3 +45,15 @@ class MainCog(commands.Cog):
             return
         self.message_downloader.download_channel(interaction.channel)
         await interaction.response.send_message("Channel download has started")
+
+    @app_commands.command(description="Show pending channel downloads")
+    async def pending(self, interaction: Interaction):
+        names = ", ".join(
+            channel.name
+            for channel in self.message_downloader.pending_channel_downloads.values()
+            if channel.guild == interaction.guild
+        )
+        if names == "":
+            await interaction.response.send_message("No downloads in progress")
+        else:
+            await interaction.response.send_message(f"Downloads in progress: {names}")
