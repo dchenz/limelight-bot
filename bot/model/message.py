@@ -1,4 +1,4 @@
-from database import Base
+from bot.database import Base
 from sqlalchemy import (
     BigInteger,
     Boolean,
@@ -10,10 +10,10 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from model.channel_mentions import channel_mentions_table
-from model.role_mentions import role_mentions_table
-from model.sent_sticker import sent_sticker_table
-from model.user_mentions import user_mentions_table
+from bot.model.channel_mentions import channel_mentions_table
+from bot.model.role_mentions import role_mentions_table
+from bot.model.sent_sticker import sent_sticker_table
+from bot.model.user_mentions import user_mentions_table
 
 
 class Message(Base):

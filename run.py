@@ -1,7 +1,7 @@
 import yaml
 from schema import Schema, Optional
 from bot import LimelightBot
-from database import init_database
+from bot.database import init_database
 
 
 def load_config():

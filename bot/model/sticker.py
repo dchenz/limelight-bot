@@ -1,8 +1,8 @@
-from database import Base
+from bot.database import Base
 from sqlalchemy import BigInteger, Column, String
 from sqlalchemy.orm import relationship
 
-from model.sent_sticker import sent_sticker_table
+from bot.model.sent_sticker import sent_sticker_table
 
 
 class Sticker(Base):

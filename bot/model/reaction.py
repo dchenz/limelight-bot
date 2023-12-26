@@ -1,4 +1,4 @@
-from database import Base
+from bot.database import Base
 from sqlalchemy import BigInteger, Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 

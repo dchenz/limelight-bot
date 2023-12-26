@@ -2,9 +2,8 @@ from typing import Optional, Union
 
 import discord
 import discord_emoji
-import model
-
-from database import Session, snowflake
+from bot import model
+from bot.database import Session, snowflake
 
 
 def save_discord_message(message: discord.Message):
@@ -37,7 +36,6 @@ def save_discord_message(message: discord.Message):
         model_message.embeds.append(e)
 
     with Session() as session:
-
         session.merge(model_message)
 
         # Does not work if reaction PK already added to db

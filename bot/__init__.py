@@ -2,8 +2,8 @@ import shlex
 
 import discord
 
-from commands.parsing import CommandParseError
-from commands.sync import run_sync_start
+from bot.commands.parsing import CommandParseError
+from bot.commands.sync import run_sync_start
 
 
 class LimelightBot(discord.Client):

@@ -1,4 +1,4 @@
-from database import Base
+from bot.database import Base
 from sqlalchemy import Column, ForeignKey, Table
 
 # Currently, Discord messages can only have one sticker.
