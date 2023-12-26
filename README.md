@@ -5,20 +5,14 @@ This bot is used to download every message in a Discord server and keep it in sy
 ## Setup
 
 ```sh
-# Clone the repository
+# Edit the placeholder values with your bot configuration.
+cp config.example.yaml config.yaml && vim config.yaml
 
-echo "TOKEN=YOUR_SECRET_BOT_TOKEN" > .env
-# or
-export TOKEN=YOUR_SECRET_BOT_TOKEN
-
+# Install python dependencies.
 pip3 install -r requirements.txt
-python3 bot.py
 
-# Before starting the bot,
-# create/edit the config files if you need them
-cd config
-cp allowed_users.example.json allowed_users.json
-cp ignored_channels.example.json ignored_channels.json
+# Start the bot.
+python3 bot.py
 ```
 
 ## Commands
