@@ -9,7 +9,6 @@ Base.query = Session.query_property()
 
 def init_database(connection_string: str, debug: bool = False):
     """Create all tables defined by the model. Called after modules are imported."""
-    global Session, session_maker
     engine = create_engine(connection_string, echo=debug)
     Session.remove()
     session_maker.configure(bind=engine)

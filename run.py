@@ -1,5 +1,6 @@
 import yaml
-from schema import Schema, Optional
+from schema import Optional, Schema
+
 from bot import LimelightBot
 from bot.database import init_database
 
@@ -17,7 +18,7 @@ def load_config():
             "bot_prefix": str,
         }
     )
-    with open("./config.yaml") as f:
+    with open("./config.yaml", "r", encoding="utf-8") as f:
         return config_schema.validate(yaml.safe_load(f))
 
 

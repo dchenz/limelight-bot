@@ -2,8 +2,9 @@ import asyncio
 from argparse import Namespace
 
 import discord
-from bot.database.save import save_discord_message
+
 from bot.commands.parsing import CommandParser, get_channel_id
+from bot.database.save import save_discord_message
 
 
 class SyncController:

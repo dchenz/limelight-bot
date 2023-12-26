@@ -1,7 +1,7 @@
-from bot.database import Base
 from sqlalchemy import BigInteger, Column, String
 from sqlalchemy.orm import relationship
 
+from bot.database import Base
 from bot.model.sent_sticker import sent_sticker_table
 
 

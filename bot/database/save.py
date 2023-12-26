@@ -2,6 +2,7 @@ from typing import Optional, Union
 
 import discord
 import discord_emoji
+
 from bot import model
 from bot.database import Session, snowflake
 
@@ -12,28 +13,22 @@ def save_discord_message(message: discord.Message):
     model_message = _get_message(message)
 
     for atch in message.attachments:
-        a = _get_attachment(atch)
-        model_message.attachments.append(a)
+        model_message.attachments.append(_get_attachment(atch))
 
     for user in message.mentions:
-        u = _get_user(user)
-        model_message.mention_users.append(u)
+        model_message.mention_users.append(_get_user(user))
 
     for role in message.role_mentions:
-        r = _get_role(role)
-        model_message.mention_roles.append(r)
+        model_message.mention_roles.append(_get_role(role))
 
     for channel in message.channel_mentions:
-        c = _get_channel(channel)
-        model_message.mention_channels.append(c)
+        model_message.mention_channels.append(_get_channel(channel))
 
     for sticker in message.stickers:
-        s = _get_sticker(sticker)
-        model_message.stickers.append(s)
+        model_message.stickers.append(_get_sticker(sticker))
 
     for embed in message.embeds:
-        e = _get_embed(embed)
-        model_message.embeds.append(e)
+        model_message.embeds.append(_get_embed(embed))
 
     with Session() as session:
         session.merge(model_message)

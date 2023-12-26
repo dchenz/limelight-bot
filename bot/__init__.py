@@ -29,6 +29,7 @@ class LimelightBot(discord.Client):
         print(f"Prefix: {self.prefix}")
         print("----------------")
 
+    # pylint: disable=too-many-branches
     async def on_message(self, message: discord.Message):
         if message.author == self.user:
             return

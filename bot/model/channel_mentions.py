@@ -1,5 +1,6 @@
-from bot.database import Base
 from sqlalchemy import Column, ForeignKey, Table
+
+from bot.database import Base
 
 channel_mentions_table = Table(
     "discord_channel_mentions",

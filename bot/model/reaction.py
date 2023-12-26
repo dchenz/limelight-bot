@@ -1,6 +1,7 @@
-from bot.database import Base
 from sqlalchemy import BigInteger, Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship
+
+from bot.database import Base
 
 
 class Reaction(Base):
