@@ -31,6 +31,17 @@ class MainCog(commands.Cog):
 
     @app_commands.command(description="Download messages in the current channel")
     async def download(self, interaction: Interaction):
-        if interaction.channel:
-            self.message_downloader.download_channel(interaction.channel)
-            await interaction.response.send_message("Channel download has started")
+        if not interaction.channel:
+            return
+        if self.message_downloader.channel_is_downloading(interaction.channel):
+            await interaction.response.send_message(
+                "Channel is already being downloaded."
+            )
+            return
+        if self.message_downloader.too_many_channels():
+            await interaction.response.send_message(
+                "Too many channels being downloaded."
+            )
+            return
+        self.message_downloader.download_channel(interaction.channel)
+        await interaction.response.send_message("Channel download has started")
