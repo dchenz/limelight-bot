@@ -1,9 +1,14 @@
 token: my token
+
 allowed_users:
   - 123
-ignored_channels:
-  - 456
+
 database:
   connection_string: sqlite:///relative/path
   debug: false
+
 bot_prefix: "&lime"
+
+# (Optional)
+# ignored_channels:
+#   - 123

@@ -1,5 +1,5 @@
 import yaml
-from schema import Schema
+from schema import Schema, Optional
 from bot import LimelightBot
 from database import init_database
 
@@ -9,9 +9,12 @@ def load_config():
         {
             "token": str,
             "allowed_users": [int],
-            "ignored_channels": [int],
-            "database": {"connection_string": str, "debug": bool},
-            "bot_prefix": str
+            Optional("ignored_channels", default=[]): [int],
+            "database": {
+                "connection_string": str,
+                Optional("debug", default=False): bool,
+            },
+            "bot_prefix": str,
         }
     )
     with open("./config.yaml") as f:
