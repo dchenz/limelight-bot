@@ -29,12 +29,19 @@ init_database(
 bot_intents = Intents.default()
 bot_intents.messages = True
 bot_intents.message_content = True
-bot = commands.Bot(command_prefix=None, intents=bot_intents)
+bot = commands.Bot(command_prefix="", intents=bot_intents)
 
 
 @bot.event
 async def setup_hook():
     await bot.load_extension("cogs.maincog")
+
+
+@bot.event
+async def on_command_error(_, error):
+    if isinstance(error, commands.CommandNotFound):
+        return
+    raise error
 
 
 bot.run(config["token"])
