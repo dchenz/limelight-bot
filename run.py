@@ -15,7 +15,6 @@ config_schema = Schema(
             "connection_string": str,
             Optional("debug", default=False): bool,
         },
-        "bot_prefix": str,
     }
 )
 
@@ -30,7 +29,7 @@ init_database(
 bot_intents = Intents.default()
 bot_intents.messages = True
 bot_intents.message_content = True
-bot = commands.Bot(command_prefix=config["bot_prefix"], intents=bot_intents)
+bot = commands.Bot(command_prefix=None, intents=bot_intents)
 
 
 @bot.event

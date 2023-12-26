@@ -3,5 +3,3 @@ token: my token
 database:
   connection_string: sqlite:///relative/path
   debug: false
-
-bot_prefix: "&&"
