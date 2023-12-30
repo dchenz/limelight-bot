@@ -5,6 +5,6 @@ from database import Base
 user_mentions_table = Table(
     "discord_user_mentions",
     Base.metadata,
-    Column("message_id", ForeignKey("discord_message.uid")),
+    Column("message_id", ForeignKey("discord_message.uid", ondelete="cascade")),
     Column("user_id", ForeignKey("discord_user.uid")),
 )

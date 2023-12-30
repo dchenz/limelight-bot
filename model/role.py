@@ -17,5 +17,8 @@ class Role(Base):
     color = Column(Integer, nullable=False)
 
     mentions = relationship(
-        "Message", secondary=role_mentions_table, back_populates="mention_roles"
+        "Message",
+        secondary=role_mentions_table,
+        back_populates="mention_roles",
+        passive_deletes=True,
     )

@@ -1,7 +1,7 @@
 import logging
 from functools import wraps
 
-from discord import Interaction, Message, app_commands
+from discord import Interaction, Message, RawMessageDeleteEvent, app_commands
 from discord.ext import commands
 
 from services.messages import MessagesService, MessagesServiceError
@@ -42,6 +42,10 @@ class MainCog(commands.Cog):
         if message.guild is None:
             return
         await self.messages_svc.download_message(message)
+
+    @commands.Cog.listener()
+    async def on_raw_message_delete(self, event: RawMessageDeleteEvent):
+        await self.messages_svc.delete_message(event.message_id)
 
     @app_commands.command(description="Download messages in the current channel")
     @log_command

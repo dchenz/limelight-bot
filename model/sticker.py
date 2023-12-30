@@ -15,5 +15,8 @@ class Sticker(Base):
     url = Column(String(URL_STRING_SIZE), nullable=False)
 
     messages = relationship(
-        "Message", secondary=sent_sticker_table, back_populates="stickers"
+        "Message",
+        secondary=sent_sticker_table,
+        back_populates="stickers",
+        passive_deletes=True,
     )

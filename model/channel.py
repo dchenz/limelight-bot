@@ -29,4 +29,5 @@ class Channel(Base):
         "Message",
         secondary=channel_mentions_table,
         back_populates="mention_channels",
+        passive_deletes=True,
     )

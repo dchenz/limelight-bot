@@ -2,6 +2,7 @@ import asyncio
 
 from discord import Message, TextChannel
 
+from database.delete import delete_discord_message
 from database.save import save_discord_message
 
 
@@ -44,3 +45,6 @@ class MessagesService:
             for channel in self.pending_channel_downloads.values()
             if channel.guild.id == guild_id
         ]
+
+    async def delete_message(self, message_id: int):
+        delete_discord_message(message_id)

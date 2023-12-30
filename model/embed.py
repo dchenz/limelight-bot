@@ -27,7 +27,11 @@ class Embed(Base):
     timestamp = Column(DateTime)
     color = Column(Integer)
 
-    message_id = Column(BigInteger, ForeignKey("discord_message.uid"), nullable=False)
+    message_id = Column(
+        BigInteger,
+        ForeignKey("discord_message.uid", ondelete="cascade"),
+        nullable=False,
+    )
     image_id = Column(BigInteger, ForeignKey("discord_message_embed_media.uid"))
     video_id = Column(BigInteger, ForeignKey("discord_message_embed_media.uid"))
     thumbnail_id = Column(BigInteger, ForeignKey("discord_message_embed_media.uid"))
@@ -43,7 +47,7 @@ class Embed(Base):
     author = relationship("EmbedAuthor", uselist=False)
     footer = relationship("EmbedFooter", uselist=False)
 
-    fields = relationship("EmbedField")
+    fields = relationship("EmbedField", back_populates="embed")
 
 
 class EmbedMedia(Base):
@@ -105,5 +109,9 @@ class EmbedField(Base):
     inline = Column(Boolean)
 
     embed_id = Column(
-        BigInteger, ForeignKey("discord_message_embed.uid"), nullable=False
+        BigInteger,
+        ForeignKey("discord_message_embed.uid", ondelete="cascade"),
+        nullable=False,
     )
+
+    embed = relationship("Embed", back_populates="fields")

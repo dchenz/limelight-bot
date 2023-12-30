@@ -20,6 +20,10 @@ class Attachment(Base):
     width = Column(Integer)
     height = Column(Integer)
 
-    message_id = Column(BigInteger, ForeignKey("discord_message.uid"), nullable=False)
+    message_id = Column(
+        BigInteger,
+        ForeignKey("discord_message.uid", ondelete="cascade"),
+        nullable=False,
+    )
 
     message = relationship("Message", back_populates="attachments")

@@ -37,7 +37,9 @@ class Message(Base):
 
     author_id = Column(BigInteger, ForeignKey("discord_user.uid"), nullable=False)
     channel_id = Column(BigInteger, ForeignKey("discord_channel.uid"))
-    reference_id = Column(BigInteger, ForeignKey("discord_message.uid"))
+    reference_id = Column(
+        BigInteger, ForeignKey("discord_message.uid", ondelete="set null")
+    )
 
     author = relationship("User", back_populates="messages")
     channel = relationship("Channel", back_populates="messages")
@@ -51,14 +53,26 @@ class Message(Base):
     reactions = relationship("Reaction", back_populates="message")
 
     mention_users = relationship(
-        "User", secondary=user_mentions_table, back_populates="mentions"
+        "User",
+        secondary=user_mentions_table,
+        back_populates="mentions",
+        cascade="all,delete",
     )
     mention_roles = relationship(
-        "Role", secondary=role_mentions_table, back_populates="mentions"
+        "Role",
+        secondary=role_mentions_table,
+        back_populates="mentions",
+        cascade="all,delete",
     )
     mention_channels = relationship(
-        "Channel", secondary=channel_mentions_table, back_populates="mentions"
+        "Channel",
+        secondary=channel_mentions_table,
+        back_populates="mentions",
+        cascade="all,delete",
     )
     stickers = relationship(
-        "Sticker", secondary=sent_sticker_table, back_populates="messages"
+        "Sticker",
+        secondary=sent_sticker_table,
+        back_populates="messages",
+        cascade="all,delete",
     )

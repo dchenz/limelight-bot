@@ -22,5 +22,8 @@ class User(Base):
 
     messages = relationship("Message", back_populates="author")
     mentions = relationship(
-        "Message", secondary=user_mentions_table, back_populates="mention_users"
+        "Message",
+        secondary=user_mentions_table,
+        back_populates="mention_users",
+        passive_deletes=True,
     )
