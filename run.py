@@ -5,10 +5,6 @@ from discord import Intents
 from discord.ext import commands
 from schema import Optional, Schema
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s"
-)
-
 # Required to initialize sqlalchemy models.
 # pylint: disable=unused-import
 import model
@@ -17,19 +13,31 @@ from database import init_database
 config_schema = Schema(
     {
         "token": str,
+        Optional("logging"): {
+            Optional("level", default="ERROR"): str,
+            Optional("sqlalchemy", default=False): bool,
+        },
         "database": {
             "connection_string": str,
-            Optional("debug", default=False): bool,
         },
     }
 )
 
+
 with open("./config.yaml", "r", encoding="utf-8") as f:
     config = config_schema.validate(yaml.safe_load(f))
+    if "logging" not in config:
+        config["logging"] = {"level": "ERROR", "sqlalchemy": False}
+
+logging.basicConfig(
+    level=logging.getLevelName(config["logging"]["level"].upper()),
+    format="%(asctime)s :: %(levelname)s :: %(message)s",
+)
+
 
 init_database(
     connection_string=config["database"]["connection_string"],
-    debug=config["database"]["debug"],
+    debug=config["logging"]["sqlalchemy"],
 )
 
 bot_intents = Intents.default()
