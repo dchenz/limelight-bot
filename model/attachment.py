@@ -1,7 +1,7 @@
 from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from database import Base
+from database import DEFAULT_STRING_SIZE, Base
 
 
 class Attachment(Base):
@@ -12,11 +12,11 @@ class Attachment(Base):
     # Discord 18-digit ID
     uid = Column(BigInteger, primary_key=True)
 
-    filename = Column(String, nullable=False)
-    content_type = Column(String)
+    filename = Column(String(DEFAULT_STRING_SIZE), nullable=False)
+    content_type = Column(String(DEFAULT_STRING_SIZE))
     size = Column(Integer, nullable=False)
-    url = Column(String, nullable=False)
-    proxy_url = Column(String, nullable=False)
+    url = Column(String(DEFAULT_STRING_SIZE), nullable=False)
+    proxy_url = Column(String(DEFAULT_STRING_SIZE), nullable=False)
     width = Column(Integer)
     height = Column(Integer)
 

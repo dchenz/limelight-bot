@@ -1,7 +1,7 @@
 from sqlalchemy import BigInteger, Column, String
 from sqlalchemy.orm import relationship
 
-from database import Base
+from database import DEFAULT_STRING_SIZE, Base
 from model.sent_sticker import sent_sticker_table
 
 
@@ -10,9 +10,9 @@ class Sticker(Base):
 
     uid = Column(BigInteger, primary_key=True)
 
-    name = Column(String, nullable=False)
-    content_type = Column(String, nullable=False)
-    url = Column(String, nullable=False)
+    name = Column(String(DEFAULT_STRING_SIZE), nullable=False)
+    content_type = Column(String(DEFAULT_STRING_SIZE), nullable=False)
+    url = Column(String(DEFAULT_STRING_SIZE), nullable=False)
 
     messages = relationship(
         "Message", secondary=sent_sticker_table, back_populates="stickers"

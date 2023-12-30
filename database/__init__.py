@@ -13,3 +13,6 @@ def init_database(connection_string: str, debug: bool = False):
     Session.remove()
     session_maker.configure(bind=engine)
     Base.metadata.create_all(bind=engine)
+
+
+DEFAULT_STRING_SIZE = 255

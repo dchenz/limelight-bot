@@ -6,10 +6,11 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
+    Text,
 )
 from sqlalchemy.orm import relationship
 
-from database import Base
+from database import DEFAULT_STRING_SIZE, Base
 from model.channel_mentions import channel_mentions_table
 from model.role_mentions import role_mentions_table
 from model.sent_sticker import sent_sticker_table
@@ -29,8 +30,8 @@ class Message(Base):
     tts = Column(Boolean, nullable=False)
     mention_everyone = Column(Boolean, nullable=False)
     pinned = Column(Boolean, nullable=False)
-    content = Column(String, nullable=False)
-    jump_url = Column(String, nullable=False)
+    content = Column(Text, nullable=False)
+    jump_url = Column(String(DEFAULT_STRING_SIZE), nullable=False)
     flags = Column(Integer, nullable=False)
     variant = Column(Integer, nullable=False)
 

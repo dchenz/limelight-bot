@@ -1,7 +1,7 @@
 from sqlalchemy import BigInteger, Boolean, CheckConstraint, Column, String
 from sqlalchemy.orm import relationship
 
-from database import Base
+from database import DEFAULT_STRING_SIZE, Base
 from model.channel_mentions import channel_mentions_table
 
 
@@ -19,7 +19,7 @@ class Channel(Base):
     # Discord 18-digit ID
     uid = Column(BigInteger, primary_key=True)
 
-    name = Column(String, nullable=False)
+    name = Column(String(DEFAULT_STRING_SIZE), nullable=False)
     thread = Column(Boolean, nullable=False)
 
     thread_archived = Column(Boolean)
