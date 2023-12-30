@@ -1,7 +1,7 @@
 from discord import Interaction, Message, app_commands
 from discord.ext import commands
 
-from services.messages import MessagesService
+from services.messages import MessagesService, MessagesServiceError
 
 
 async def setup(bot: commands.Bot):
@@ -32,13 +32,11 @@ class MainCog(commands.Cog):
     async def download(self, interaction: Interaction):
         if not interaction.channel:
             return
-        if self.messages_svc.channel_is_downloading(interaction.channel):
-            await interaction.response.send_message(
-                "Channel is already being downloaded."
-            )
-            return
-        self.messages_svc.download_channel(interaction.channel)
-        await interaction.response.send_message("Channel download has started")
+        try:
+            self.messages_svc.download_channel(interaction.channel)
+            await interaction.response.send_message("Channel download has started")
+        except MessagesServiceError as e:
+            await interaction.response.send_message(e.message)
 
     @app_commands.command(description="Show pending channel downloads")
     async def pending(self, interaction: Interaction):
