@@ -51,7 +51,7 @@ def _get_message(message: discord.Message) -> model.Message:
     if message.reference is not None:
         reference = _get_message_ref(message.reference)
 
-    model_message = model.Message(
+    model_message = model.Message(  # type: ignore
         uid=message.id,
         created_at=message.created_at,
         edited_at=message.edited_at,
@@ -63,7 +63,7 @@ def _get_message(message: discord.Message) -> model.Message:
         flags=message.flags.value,
         variant=message.type.value,
         author=_get_user(message.author),
-        channel=_get_channel(message.channel),  # type: ignore
+        channel=_get_channel(message.channel),
         reference=reference,
     )
 
@@ -73,7 +73,7 @@ def _get_message(message: discord.Message) -> model.Message:
 def _get_user(user: Union[discord.Member, discord.User]) -> model.User:
     """Convert a discord message's author into its model object"""
 
-    return model.User(
+    return model.User(  # type: ignore
         uid=user.id,
         username=f"{user.name}#{user.discriminator}",
         bot=user.bot,
@@ -82,16 +82,18 @@ def _get_user(user: Union[discord.Member, discord.User]) -> model.User:
 
 
 def _get_channel(
-    channel: Union[discord.abc.GuildChannel, discord.Thread]
+    channel: Union[discord.abc.MessageableChannel, discord.abc.GuildChannel]
 ) -> model.Channel:
     """Convert a discord message's channel/thread into its model object"""
 
     if isinstance(channel, discord.TextChannel):
-        return model.Channel(uid=channel.id, name=channel.name, thread=False)
+        return model.Channel(  # type: ignore
+            uid=channel.id, name=channel.name, thread=False
+        )
 
     if isinstance(channel, discord.Thread):
         thread = channel
-        return model.Channel(
+        return model.Channel(  # type: ignore
             uid=thread.id,
             name=thread.name,
             thread=True,
@@ -116,7 +118,7 @@ def _get_message_ref(ref: discord.MessageReference) -> Optional[model.Message]:
 def _get_sticker(sticker: discord.StickerItem) -> model.Sticker:
     """Convert a discord sticker into its model object"""
 
-    return model.Sticker(
+    return model.Sticker(  # type: ignore
         uid=sticker.id,
         name=sticker.name,
         content_type=sticker.format.name,
@@ -134,7 +136,7 @@ def _get_embed(embed: discord.Embed) -> model.Embed:
         embed.to_dict(), global_unique=False
     )
 
-    model_embed = model.Embed(
+    model_embed = model.Embed(  # type: ignore
         uid=embed_unique_id,
         title=embed.title,
         variant=embed.type,
@@ -144,7 +146,7 @@ def _get_embed(embed: discord.Embed) -> model.Embed:
     )
 
     if embed.color:
-        model_embed.color = embed.color.value  # type: ignore
+        model_embed.color = embed.color.value
 
     if embed.image:
         model_embed.image = _get_embed_media(embed.image)
@@ -156,14 +158,14 @@ def _get_embed(embed: discord.Embed) -> model.Embed:
         model_embed.thumbnail = _get_embed_media(embed.thumbnail)
 
     if embed.provider:
-        model_embed.provider = model.EmbedProvider(
+        model_embed.provider = model.EmbedProvider(  # type: ignore
             uid=embed_unique_id,
             name=embed.provider.name,
             url=embed.provider.url,
         )
 
     if embed.author:
-        model_embed.author = model.EmbedAuthor(
+        model_embed.author = model.EmbedAuthor(  # type: ignore
             uid=embed_unique_id,
             name=embed.author.name,
             url=embed.author.url,
@@ -171,7 +173,7 @@ def _get_embed(embed: discord.Embed) -> model.Embed:
         )
 
     if embed.footer:
-        model_embed.footer = model.EmbedFooter(
+        model_embed.footer = model.EmbedFooter(  # type: ignore
             uid=embed_unique_id,
             text=embed.footer.text,
             icon_url=embed.footer.icon_url,
@@ -179,7 +181,7 @@ def _get_embed(embed: discord.Embed) -> model.Embed:
 
     for field in embed.fields:
         model_embed.fields.append(
-            model.EmbedField(
+            model.EmbedField(  # type: ignore
                 uid=snowflake.hash_object_to_snowflake(
                     [field.name, field.value, field.inline], global_unique=False
                 ),
@@ -199,7 +201,7 @@ def _get_embed_media(media) -> model.EmbedMedia:
         getattr(media, "width", None),
         getattr(media, "height", None),
     ]
-    return model.EmbedMedia(
+    return model.EmbedMedia(  # type: ignore
         uid=snowflake.hash_object_to_snowflake(obj, global_unique=False),
         url=obj[0],
         proxy_url=obj[1],
@@ -211,7 +213,7 @@ def _get_embed_media(media) -> model.EmbedMedia:
 def _get_attachment(attachment: discord.Attachment) -> model.Attachment:
     """Convert a discord message attachment into its model object"""
 
-    return model.Attachment(
+    return model.Attachment(  # type: ignore
         uid=attachment.id,
         filename=attachment.filename,
         content_type=attachment.content_type,
@@ -226,7 +228,9 @@ def _get_attachment(attachment: discord.Attachment) -> model.Attachment:
 def _get_role(role: discord.Role) -> model.Role:
     """Convert a discord role into its model object"""
 
-    return model.Role(uid=role.id, name=role.name, color=role.color.value)
+    return model.Role(  # type: ignore
+        uid=role.id, name=role.name, color=role.color.value
+    )
 
 
 def _get_reaction(
@@ -236,7 +240,7 @@ def _get_reaction(
 
     model_emoji = _get_emoji(reaction.emoji)
 
-    model_react = model.Reaction(
+    model_react = model.Reaction(  # type: ignore
         message=model_message, emoji=model_emoji, count=reaction.count
     )
 
@@ -258,4 +262,6 @@ def _get_emoji(emoji: Union[discord.Emoji, discord.PartialEmoji, str]) -> model.
         emoji_url = str(emoji.url)
         is_custom = True
 
-    return model.Emoji(uid=emoji_id, name=emoji_name, url=emoji_url, custom=is_custom)
+    return model.Emoji(  # type: ignore
+        uid=emoji_id, name=emoji_name, url=emoji_url, custom=is_custom
+    )
