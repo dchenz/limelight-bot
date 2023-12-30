@@ -1,7 +1,13 @@
+import logging
+
 import yaml
 from discord import Intents
 from discord.ext import commands
 from schema import Optional, Schema
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s :: %(levelname)s :: %(message)s"
+)
 
 # Required to initialize sqlalchemy models.
 # pylint: disable=unused-import
