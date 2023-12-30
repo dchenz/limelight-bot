@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import declarative_base, scoped_session, sessionmaker
 
 Base = declarative_base()
@@ -13,6 +13,13 @@ def init_database(connection_string: str, debug: bool = False):
     Session.remove()
     session_maker.configure(bind=engine)
     Base.metadata.create_all(bind=engine)
+
+    if connection_string.startswith("sqlite:"):
+
+        def _enable_fk(conn, _):
+            conn.execute("PRAGMA foreign_keys=ON")
+
+        event.listen(engine, "connect", _enable_fk)
 
 
 DEFAULT_STRING_SIZE = 255
