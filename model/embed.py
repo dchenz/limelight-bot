@@ -6,10 +6,11 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
+    Text,
 )
 from sqlalchemy.orm import relationship
 
-from database import DEFAULT_STRING_SIZE, Base
+from database import DEFAULT_STRING_SIZE, URL_STRING_SIZE, Base
 
 
 class Embed(Base):
@@ -21,8 +22,8 @@ class Embed(Base):
 
     title = Column(String(DEFAULT_STRING_SIZE))
     variant = Column(String(DEFAULT_STRING_SIZE))
-    description = Column(String(DEFAULT_STRING_SIZE))
-    url = Column(String(DEFAULT_STRING_SIZE))
+    description = Column(Text)
+    url = Column(String(URL_STRING_SIZE))
     timestamp = Column(DateTime)
     color = Column(Integer)
 
@@ -52,8 +53,8 @@ class EmbedMedia(Base):
 
     uid = Column(BigInteger, primary_key=True)
 
-    url = Column(String(DEFAULT_STRING_SIZE))
-    proxy_url = Column(String(DEFAULT_STRING_SIZE))
+    url = Column(String(URL_STRING_SIZE))
+    proxy_url = Column(String(URL_STRING_SIZE))
     width = Column(Integer)
     height = Column(Integer)
 
@@ -66,7 +67,7 @@ class EmbedProvider(Base):
     uid = Column(BigInteger, primary_key=True)
 
     name = Column(String(DEFAULT_STRING_SIZE))
-    url = Column(String(DEFAULT_STRING_SIZE))
+    url = Column(String(URL_STRING_SIZE))
 
 
 class EmbedAuthor(Base):
@@ -77,8 +78,8 @@ class EmbedAuthor(Base):
     uid = Column(BigInteger, primary_key=True)
 
     name = Column(String(DEFAULT_STRING_SIZE), nullable=False)
-    url = Column(String(DEFAULT_STRING_SIZE))
-    icon_url = Column(String(DEFAULT_STRING_SIZE))
+    url = Column(String(URL_STRING_SIZE))
+    icon_url = Column(String(URL_STRING_SIZE))
 
 
 class EmbedFooter(Base):
@@ -88,8 +89,8 @@ class EmbedFooter(Base):
 
     uid = Column(BigInteger, primary_key=True)
 
-    text = Column(String(DEFAULT_STRING_SIZE), nullable=False)
-    icon_url = Column(String(DEFAULT_STRING_SIZE))
+    text = Column(Text, nullable=False)
+    icon_url = Column(String(URL_STRING_SIZE))
 
 
 class EmbedField(Base):
@@ -100,7 +101,7 @@ class EmbedField(Base):
     uid = Column(BigInteger, primary_key=True)
 
     name = Column(String(DEFAULT_STRING_SIZE), nullable=False)
-    value = Column(String(DEFAULT_STRING_SIZE))
+    value = Column(Text)
     inline = Column(Boolean)
 
     embed_id = Column(

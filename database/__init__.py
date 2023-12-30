@@ -16,3 +16,4 @@ def init_database(connection_string: str, debug: bool = False):
 
 
 DEFAULT_STRING_SIZE = 255
+URL_STRING_SIZE = 2048

@@ -1,7 +1,7 @@
 from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from database import DEFAULT_STRING_SIZE, Base
+from database import DEFAULT_STRING_SIZE, URL_STRING_SIZE, Base
 
 
 class Attachment(Base):
@@ -15,8 +15,8 @@ class Attachment(Base):
     filename = Column(String(DEFAULT_STRING_SIZE), nullable=False)
     content_type = Column(String(DEFAULT_STRING_SIZE))
     size = Column(Integer, nullable=False)
-    url = Column(String(DEFAULT_STRING_SIZE), nullable=False)
-    proxy_url = Column(String(DEFAULT_STRING_SIZE), nullable=False)
+    url = Column(String(URL_STRING_SIZE), nullable=False)
+    proxy_url = Column(String(URL_STRING_SIZE), nullable=False)
     width = Column(Integer)
     height = Column(Integer)
 

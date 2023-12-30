@@ -1,7 +1,7 @@
 from sqlalchemy import BigInteger, Boolean, Column, String
 from sqlalchemy.orm import relationship
 
-from database import DEFAULT_STRING_SIZE, Base
+from database import DEFAULT_STRING_SIZE, URL_STRING_SIZE, Base
 
 
 class Emoji(Base):
@@ -10,7 +10,7 @@ class Emoji(Base):
     uid = Column(BigInteger, primary_key=True)
 
     name = Column(String(DEFAULT_STRING_SIZE), nullable=False)
-    url = Column(String(DEFAULT_STRING_SIZE), nullable=False)
+    url = Column(String(URL_STRING_SIZE), nullable=False)
     custom = Column(Boolean, nullable=False)
 
     reactions = relationship("Reaction", back_populates="emoji")
