@@ -1,7 +1,14 @@
 import logging
 from functools import wraps
 
-from discord import Interaction, Message, RawMessageDeleteEvent, app_commands
+from discord import (
+    Interaction,
+    Message,
+    RawMessageDeleteEvent,
+    TextChannel,
+    Thread,
+    app_commands,
+)
 from discord.ext import commands
 
 from services.messages import MessagesService, MessagesServiceError
@@ -52,6 +59,8 @@ class MainCog(commands.Cog):
     async def download(self, interaction: Interaction):
         if not interaction.channel:
             return
+        if not isinstance(interaction.channel, (TextChannel, Thread)):
+            return
         try:
             self.messages_svc.download_channel(interaction.channel)
             await interaction.response.send_message("Channel download has started")
@@ -61,7 +70,9 @@ class MainCog(commands.Cog):
     @app_commands.command(description="Show pending channel downloads")
     @log_command
     async def pending(self, interaction: Interaction):
-        channels = self.messages_svc.current_channel_downloads(interaction.guild_id)
+        channels = self.messages_svc.current_channel_downloads(
+            interaction.guild_id or 0
+        )
         if channels:
             await interaction.response.send_message(
                 f"Downloads in progress: {', '.join(c.name for c in channels)}"
