@@ -37,3 +37,10 @@ class MessagesService:
         async for message in channel.history(limit=None):
             await self.download_message(message)
         del self.pending_channel_downloads[channel.id]
+
+    def current_channel_downloads(self, guild_id: int) -> list[TextChannel]:
+        return [
+            channel
+            for channel in self.pending_channel_downloads.values()
+            if channel.guild.id == guild_id
+        ]
