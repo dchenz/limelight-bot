@@ -1,10 +1,13 @@
-from typing import Optional, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 import discord
 import discord_emoji
 
 import model
 from database import Session, snowflake
+
+if TYPE_CHECKING:
+    from discord.abc import GuildChannel, Messageable
 
 
 def save_discord_message(message: discord.Message):
@@ -81,9 +84,7 @@ def _get_user(user: Union[discord.Member, discord.User]) -> model.User:
     )
 
 
-def _get_channel(
-    channel: Union[discord.abc.MessageableChannel, discord.abc.GuildChannel]
-) -> model.Channel:
+def _get_channel(channel: "Union[Messageable, GuildChannel]") -> model.Channel:
     """Convert a discord message's channel/thread into its model object"""
 
     if isinstance(channel, discord.TextChannel):
