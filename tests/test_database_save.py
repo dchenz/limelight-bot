@@ -1,11 +1,12 @@
 import unittest
 from datetime import datetime
 
-import model
 from database import Session, init_database
 from database.save import save_discord_message
+from model import Attachment, Message
 from tests.utils.implementations import (
     MockDiscordAsset,
+    MockDiscordAttachment,
     MockDiscordChannel,
     MockDiscordMessage,
     MockDiscordUser,
@@ -29,11 +30,39 @@ class TestSaveDiscordMessage(unittest.TestCase):
     def tearDown(self):
         Session.remove()
 
+    def assertMessagesEqual(self, model_obj: Message, mock_obj: MockDiscordMessage):
+        self.assertEqual(model_obj.uid, mock_obj.id)
+        self.assertEqual(model_obj.created_at, mock_obj.created_at)
+        self.assertEqual(model_obj.content, mock_obj.content)
+        self.assertEqual(model_obj.author_id, mock_obj.author.id)
+        self.assertEqual(model_obj.channel_id, mock_obj.channel.id)
+        self.assertEqual(model_obj.jump_url, mock_obj.jump_url)
+
+        self.assertEqual(model_obj.channel_id, mock_obj.channel.id)
+        self.assertEqual(model_obj.channel.name, mock_obj.channel.name)
+
+        self.assertEqual(model_obj.author.username, mock_obj.author.username)
+        self.assertEqual(
+            model_obj.author.avatar_url, mock_obj.author.display_avatar.url
+        )
+
+    def assertAttachmentsEqual(
+        self, model_obj: Attachment, mock_obj: MockDiscordAttachment
+    ):
+        self.assertEqual(model_obj.uid, mock_obj.id)
+        self.assertEqual(model_obj.filename, mock_obj.filename)
+        self.assertEqual(model_obj.content_type, mock_obj.content_type)
+        self.assertEqual(model_obj.size, mock_obj.size)
+        self.assertEqual(model_obj.url, mock_obj.url)
+        self.assertEqual(model_obj.proxy_url, mock_obj.proxy_url)
+        self.assertEqual(model_obj.width, mock_obj.width)
+        self.assertEqual(model_obj.height, mock_obj.height)
+
     def testSimpleMessage(self):
         message = MockDiscordMessage(
             id=1234,
             created_at=datetime(2023, 1, 1, 9, 0, 0),
-            content="hello world",
+            content="hello world 1",
             author=self.user1,
             channel=self.channel1,
         )
@@ -41,27 +70,49 @@ class TestSaveDiscordMessage(unittest.TestCase):
         save_discord_message(message)
 
         with Session() as session:
-            result_message: model.Message = session.query(model.Message).get(message.id)
-            self.assertIsNotNone(result_message)
-            self.assertEqual(result_message.created_at, message.created_at)
-            self.assertEqual(result_message.content, message.content)
-            self.assertEqual(result_message.author_id, message.author.id)
-            self.assertEqual(result_message.channel_id, message.channel.id)
-            self.assertEqual(result_message.jump_url, message.jump_url)
+            result: Message = session.query(Message).get(message.id)
+            self.assertIsNotNone(result)
+            self.assertMessagesEqual(result, message)
 
-            result_channel: model.Channel = session.query(model.Channel).get(
-                message.channel.id
-            )
-            self.assertIsNotNone(result_channel)
-            self.assertEqual(result_channel.name, message.channel.name)
-            self.assertFalse(result_channel.thread)
+    def testMessageWithAttachments(self):
+        attachment1 = MockDiscordAttachment(
+            id=1000,
+            filename="screenshot.png",
+            content_type="image/png",
+            size=50000,
+            url="url 1",
+            proxy_url="proxy url 1",
+            width=600,
+            height=400,
+        )
+        attachment2 = MockDiscordAttachment(
+            id=1001,
+            filename="resume.pdf",
+            content_type="application/pdf",
+            size=12345,
+            url="url 2",
+            proxy_url="proxy url 2",
+            width=None,
+            height=None,
+        )
+        message = MockDiscordMessage(
+            id=1234,
+            created_at=datetime(2023, 1, 1, 9, 0, 0),
+            content="hello world 2",
+            author=self.user1,
+            channel=self.channel1,
+            attachments=[attachment1, attachment2],
+        )
 
-            result_author: model.User = session.query(model.User).get(message.author.id)
-            self.assertIsNotNone(result_author)
-            self.assertEqual(result_author.username, message.author.username)
-            self.assertEqual(
-                result_author.avatar_url, message.author.display_avatar.url
-            )
+        save_discord_message(message)
+
+        with Session() as session:
+            result: Message = session.query(Message).get(message.id)
+            self.assertIsNotNone(result)
+            self.assertMessagesEqual(result, message)
+            self.assertEqual(len(result.attachments), 2)
+            self.assertAttachmentsEqual(result.attachments[0], attachment1)
+            self.assertAttachmentsEqual(result.attachments[1], attachment2)
 
 
 if __name__ == "__main__":
