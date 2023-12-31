@@ -3,8 +3,7 @@ from typing import Union
 
 from discord import Message, TextChannel, Thread
 
-from database.delete import delete_discord_message
-from database.save import save_discord_message
+from database.queries import delete_discord_message, save_discord_message
 
 
 class MessagesServiceError(Exception):

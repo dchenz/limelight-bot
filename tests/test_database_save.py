@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime
 
 from database import Session, init_database, model
-from database.save import save_discord_message
+from database.queries import save_discord_message
 from tests.utils.implementations import (
     MockDiscordAsset,
     MockDiscordAttachment,

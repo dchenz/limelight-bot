@@ -273,3 +273,12 @@ def _get_emoji(emoji: "Union[DiscordEmoji, str]") -> model.Emoji:
     return model.Emoji(  # type: ignore
         uid=emoji_id, name=emoji_name, url=emoji_url, custom=is_custom
     )
+
+
+def delete_discord_message(message_id: int):
+    with Session() as session:
+        model_message = session.query(model.Message).filter(
+            model.Message.uid == message_id
+        )
+        model_message.delete()
+        session.commit()
