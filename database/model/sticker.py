@@ -2,7 +2,7 @@ from sqlalchemy import BigInteger, Column, String
 from sqlalchemy.orm import relationship
 
 from database import DEFAULT_STRING_SIZE, URL_STRING_SIZE, Base
-from model.sent_sticker import sent_sticker_table
+from database.model.sent_sticker import sent_sticker_table
 
 
 class Sticker(Base):

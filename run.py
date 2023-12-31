@@ -7,7 +7,7 @@ from schema import Optional, Schema
 
 # Required to initialize sqlalchemy models.
 # pylint: disable=unused-import
-import model
+import database.model
 from database import init_database
 
 config_schema = Schema(

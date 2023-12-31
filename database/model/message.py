@@ -11,10 +11,10 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from database import URL_STRING_SIZE, Base
-from model.channel_mentions import channel_mentions_table
-from model.role_mentions import role_mentions_table
-from model.sent_sticker import sent_sticker_table
-from model.user_mentions import user_mentions_table
+from database.model.channel_mentions import channel_mentions_table
+from database.model.role_mentions import role_mentions_table
+from database.model.sent_sticker import sent_sticker_table
+from database.model.user_mentions import user_mentions_table
 
 
 class Message(Base):

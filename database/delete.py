@@ -1,5 +1,4 @@
-import model
-from database import Session
+from database import Session, model
 
 
 def delete_discord_message(message_id: int):

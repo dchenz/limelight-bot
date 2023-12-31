@@ -2,7 +2,7 @@ from sqlalchemy import BigInteger, Boolean, CheckConstraint, Column, String
 from sqlalchemy.orm import relationship
 
 from database import DEFAULT_STRING_SIZE, Base
-from model.channel_mentions import channel_mentions_table
+from database.model.channel_mentions import channel_mentions_table
 
 
 class Channel(Base):

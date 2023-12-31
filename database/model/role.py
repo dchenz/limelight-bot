@@ -2,7 +2,7 @@ from sqlalchemy import BigInteger, Column, Integer, String
 from sqlalchemy.orm import relationship
 
 from database import DEFAULT_STRING_SIZE, Base
-from model.role_mentions import role_mentions_table
+from database.model.role_mentions import role_mentions_table
 
 
 class Role(Base):

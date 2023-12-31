@@ -1,9 +1,8 @@
 import unittest
 from datetime import datetime
 
-from database import Session, init_database
+from database import Session, init_database, model
 from database.save import save_discord_message
-from model import Attachment, Message
 from tests.utils.implementations import (
     MockDiscordAsset,
     MockDiscordAttachment,
@@ -30,7 +29,9 @@ class TestSaveDiscordMessage(unittest.TestCase):
     def tearDown(self):
         Session.remove()
 
-    def assertMessagesEqual(self, model_obj: Message, mock_obj: MockDiscordMessage):
+    def assertMessagesEqual(
+        self, model_obj: model.Message, mock_obj: MockDiscordMessage
+    ):
         self.assertEqual(model_obj.uid, mock_obj.id)
         self.assertEqual(model_obj.created_at, mock_obj.created_at)
         self.assertEqual(model_obj.content, mock_obj.content)
@@ -47,7 +48,7 @@ class TestSaveDiscordMessage(unittest.TestCase):
         )
 
     def assertAttachmentsEqual(
-        self, model_obj: Attachment, mock_obj: MockDiscordAttachment
+        self, model_obj: model.Attachment, mock_obj: MockDiscordAttachment
     ):
         self.assertEqual(model_obj.uid, mock_obj.id)
         self.assertEqual(model_obj.filename, mock_obj.filename)
@@ -70,7 +71,7 @@ class TestSaveDiscordMessage(unittest.TestCase):
         save_discord_message(message)
 
         with Session() as session:
-            result: Message = session.query(Message).get(message.id)
+            result: model.Message = session.query(model.Message).get(message.id)
             self.assertIsNotNone(result)
             self.assertMessagesEqual(result, message)
 
@@ -107,7 +108,7 @@ class TestSaveDiscordMessage(unittest.TestCase):
         save_discord_message(message)
 
         with Session() as session:
-            result: Message = session.query(Message).get(message.id)
+            result: model.Message = session.query(model.Message).get(message.id)
             self.assertIsNotNone(result)
             self.assertMessagesEqual(result, message)
             self.assertEqual(len(result.attachments), 2)

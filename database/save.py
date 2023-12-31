@@ -3,8 +3,7 @@ from typing import TYPE_CHECKING, Optional, Union
 import discord_emoji
 from discord import ChannelType
 
-import model
-from database import Session, snowflake
+from database import Session, model, snowflake
 
 if TYPE_CHECKING:
     from database.interfaces import (

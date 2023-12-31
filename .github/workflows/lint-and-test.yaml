@@ -23,7 +23,7 @@ jobs:
           black --check .
       - name: Pylint check
         run: |
-          pylint *.py cogs database model services tests
+          pylint *.py cogs database services tests
       - name: Pyright check
         run: |
           pyright .

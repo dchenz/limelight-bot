@@ -2,7 +2,7 @@ from sqlalchemy import BigInteger, Boolean, Column, String
 from sqlalchemy.orm import relationship
 
 from database import DEFAULT_STRING_SIZE, URL_STRING_SIZE, Base
-from model.user_mentions import user_mentions_table
+from database.model.user_mentions import user_mentions_table
 
 
 class User(Base):
