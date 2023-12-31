@@ -1,4 +1,4 @@
-name: lint
+name: lint-and-test
 on:
   push:
     branches:
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  lint:
+  lint-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -27,3 +27,6 @@ jobs:
       - name: Pyright check
         run: |
           pyright .
+      - name: Unit tests
+        run: |
+          python3 -m unittest
