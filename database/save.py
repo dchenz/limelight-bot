@@ -105,10 +105,8 @@ def _get_message_ref(ref: discord.MessageReference) -> Optional[model.Message]:
 
     if ref.cached_message is not None:
         return _get_message(ref.cached_message)
-    if ref.resolved is not None and not isinstance(
-        ref.resolved, discord.DeletedReferencedMessage
-    ):
-        return _get_message(ref.resolved)
+    if ref.resolved and hasattr(ref.resolved, "author"):
+        return _get_message(ref.resolved)  # type: ignore Deleted messages have no author
     return None
 
 
