@@ -170,9 +170,13 @@ class MockDiscordMessage:
     id: int
     created_at: datetime
     content: str
-    jump_url: str
     author: MockDiscordUser
     channel: MockDiscordChannel
+
+    @property
+    def jump_url(self) -> str:
+        # Server ID has not been implemented yet for cross-server bot usage.
+        return f"https://discord.com/channels/1234567890/{self.channel.id}/{self.id}"
 
     edited_at: Optional[datetime] = field(default=None)
     tts: bool = field(default=False)
