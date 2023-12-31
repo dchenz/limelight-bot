@@ -1,16 +1,29 @@
 from typing import TYPE_CHECKING, Optional, Union
 
-import discord
 import discord_emoji
+from discord import ChannelType
 
 import model
 from database import Session, snowflake
 
 if TYPE_CHECKING:
-    from discord.abc import GuildChannel, MessageableChannel
+    from database.interfaces import (
+        DiscordAttachment,
+        DiscordChannel,
+        DiscordEmbed,
+        DiscordEmbedMedia,
+        DiscordEmbedVideo,
+        DiscordEmoji,
+        DiscordMessage,
+        DiscordMessageReference,
+        DiscordReaction,
+        DiscordRole,
+        DiscordStickerItem,
+        DiscordUser,
+    )
 
 
-def save_discord_message(message: discord.Message):
+def save_discord_message(message: "DiscordMessage"):
     """Save a discord message and all of its associated entities"""
 
     model_message = _get_message(message)
@@ -47,7 +60,7 @@ def save_discord_message(message: discord.Message):
         session.commit()
 
 
-def _get_message(message: discord.Message) -> model.Message:
+def _get_message(message: "DiscordMessage") -> model.Message:
     """Convert a discord message into its model object"""
 
     reference = None
@@ -61,7 +74,7 @@ def _get_message(message: discord.Message) -> model.Message:
         tts=message.tts,
         mention_everyone=message.mention_everyone,
         pinned=message.pinned,
-        content=message.system_content,
+        content=message.content,
         jump_url=message.jump_url,
         flags=message.flags.value,
         variant=message.type.value,
@@ -73,18 +86,18 @@ def _get_message(message: discord.Message) -> model.Message:
     return model_message
 
 
-def _get_user(user: Union[discord.Member, discord.User]) -> model.User:
+def _get_user(user: "DiscordUser") -> model.User:
     """Convert a discord message's author into its model object"""
 
     return model.User(  # type: ignore
         uid=user.id,
         username=f"{user.name}#{user.discriminator}",
         bot=user.bot,
-        avatar_url=str(user.display_avatar),
+        avatar_url=user.display_avatar.url,
     )
 
 
-def _get_channel(channel: "Union[MessageableChannel, GuildChannel]") -> model.Channel:
+def _get_channel(channel: "DiscordChannel") -> model.Channel:
     """Convert a discord message's channel/thread into its model object"""
 
     name = getattr(channel, "name", None)
@@ -94,13 +107,12 @@ def _get_channel(channel: "Union[MessageableChannel, GuildChannel]") -> model.Ch
     return model.Channel(  # type: ignore
         uid=channel.id,
         name=name,
-        thread=channel.type
-        in (discord.ChannelType.public_thread, discord.ChannelType.private_thread),
+        thread=channel.type in (ChannelType.public_thread, ChannelType.private_thread),
         thread_archived=getattr(channel, "archived", None),
     )
 
 
-def _get_message_ref(ref: discord.MessageReference) -> Optional[model.Message]:
+def _get_message_ref(ref: "DiscordMessageReference") -> Optional[model.Message]:
     """Convert a discord message's reference into its model object"""
 
     if ref.cached_message is not None:
@@ -110,7 +122,7 @@ def _get_message_ref(ref: discord.MessageReference) -> Optional[model.Message]:
     return None
 
 
-def _get_sticker(sticker: discord.StickerItem) -> model.Sticker:
+def _get_sticker(sticker: "DiscordStickerItem") -> model.Sticker:
     """Convert a discord sticker into its model object"""
 
     return model.Sticker(  # type: ignore
@@ -121,7 +133,7 @@ def _get_sticker(sticker: discord.StickerItem) -> model.Sticker:
     )
 
 
-def _get_embed(embed: discord.Embed) -> model.Embed:
+def _get_embed(embed: "DiscordEmbed") -> model.Embed:
     """Convert a discord message embed into its model object"""
 
     # This ID will be shared across some embed subtables,
@@ -189,7 +201,9 @@ def _get_embed(embed: discord.Embed) -> model.Embed:
     return model_embed
 
 
-def _get_embed_media(media) -> model.EmbedMedia:
+def _get_embed_media(
+    media: "Union[DiscordEmbedMedia, DiscordEmbedVideo]",
+) -> model.EmbedMedia:
     obj = [
         getattr(media, "url", None),
         getattr(media, "proxy_url", None),
@@ -205,7 +219,7 @@ def _get_embed_media(media) -> model.EmbedMedia:
     )
 
 
-def _get_attachment(attachment: discord.Attachment) -> model.Attachment:
+def _get_attachment(attachment: "DiscordAttachment") -> model.Attachment:
     """Convert a discord message attachment into its model object"""
 
     return model.Attachment(  # type: ignore
@@ -220,7 +234,7 @@ def _get_attachment(attachment: discord.Attachment) -> model.Attachment:
     )
 
 
-def _get_role(role: discord.Role) -> model.Role:
+def _get_role(role: "DiscordRole") -> model.Role:
     """Convert a discord role into its model object"""
 
     return model.Role(  # type: ignore
@@ -229,7 +243,7 @@ def _get_role(role: discord.Role) -> model.Role:
 
 
 def _get_reaction(
-    reaction: discord.Reaction, model_message: model.Message
+    reaction: "DiscordReaction", model_message: model.Message
 ) -> model.Reaction:
     """Convert a discord reaction into its model object"""
 
@@ -242,7 +256,7 @@ def _get_reaction(
     return model_react
 
 
-def _get_emoji(emoji: Union[discord.Emoji, discord.PartialEmoji, str]) -> model.Emoji:
+def _get_emoji(emoji: "Union[DiscordEmoji, str]") -> model.Emoji:
     """Convert a discord emoji into its model object"""
 
     if isinstance(emoji, str):
@@ -254,7 +268,7 @@ def _get_emoji(emoji: Union[discord.Emoji, discord.PartialEmoji, str]) -> model.
     else:
         emoji_id = emoji.id
         emoji_name = emoji.name
-        emoji_url = str(emoji.url)
+        emoji_url = emoji.url
         is_custom = True
 
     return model.Emoji(  # type: ignore
