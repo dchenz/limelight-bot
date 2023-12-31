@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, Optional, Sequence, Union
 
@@ -146,7 +146,7 @@ class MockDiscordReaction:
 
 @dataclass
 class MockDiscordMessageFlags:
-    value: int
+    value: int = field(default=0)
 
 
 @dataclass
@@ -169,24 +169,28 @@ class MockDiscordMessageReference:
 class MockDiscordMessage:
     id: int
     created_at: datetime
-    edited_at: Optional[datetime]
-    tts: bool
-    mention_everyone: bool
-    pinned: bool
     content: str
     jump_url: str
-    flags: MockDiscordMessageFlags
-    type: MessageType
     author: MockDiscordUser
     channel: MockDiscordChannel
-    attachments: Sequence[MockDiscordAttachment]
-    mentions: Sequence[MockDiscordUser]
-    role_mentions: Sequence[MockDiscordRole]
-    channel_mentions: Union[Any, Sequence[Union[MockDiscordChannel, MockDiscordThread]]]
-    stickers: Sequence[MockDiscordStickerItem]
-    embeds: Sequence[MockDiscordEmbed]
-    reactions: Sequence[MockDiscordReaction]
-    reference: Optional[MockDiscordMessageReference]
+
+    edited_at: Optional[datetime] = field(default=None)
+    tts: bool = field(default=False)
+    pinned: bool = field(default=False)
+    mention_everyone: bool = field(default=False)
+    type: MessageType = field(default=MessageType.default)
+    flags: MockDiscordMessageFlags = field(default_factory=MockDiscordMessageFlags)
+    reference: Optional[MockDiscordMessageReference] = field(default=None)
+
+    attachments: Sequence[MockDiscordAttachment] = field(default_factory=list)
+    mentions: Sequence[MockDiscordUser] = field(default_factory=list)
+    role_mentions: Sequence[MockDiscordRole] = field(default_factory=list)
+    channel_mentions: Union[
+        Any, Sequence[Union[MockDiscordChannel, MockDiscordThread]]
+    ] = field(default_factory=list)
+    stickers: Sequence[MockDiscordStickerItem] = field(default_factory=list)
+    embeds: Sequence[MockDiscordEmbed] = field(default_factory=list)
+    reactions: Sequence[MockDiscordReaction] = field(default_factory=list)
 
 
 if TYPE_CHECKING:
