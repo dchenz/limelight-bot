@@ -27,8 +27,13 @@ class MockDiscordUser:
     id: int
     name: str
     discriminator: str
-    bot: bool
     display_avatar: MockDiscordAsset
+
+    bot: bool = field(default=False)
+
+    @property
+    def username(self) -> str:
+        return f"{self.name}#{self.discriminator}"
 
 
 @dataclass
@@ -46,15 +51,16 @@ class MockDiscordRole:
 @dataclass
 class MockDiscordChannel:
     id: int
-    type: Optional[ChannelType]
+    name: str
+    type: Optional[ChannelType] = field(default=ChannelType.text)
 
 
 @dataclass
 class MockDiscordThread:
     id: int
     name: str
-    archived: bool
-    type: Optional[ChannelType]
+    archived: bool = field(default=False)
+    type: Optional[ChannelType] = field(default=ChannelType.public_thread)
 
 
 @dataclass
