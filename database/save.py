@@ -7,7 +7,7 @@ import model
 from database import Session, snowflake
 
 if TYPE_CHECKING:
-    from discord.abc import GuildChannel, Messageable
+    from discord.abc import GuildChannel, MessageableChannel
 
 
 def save_discord_message(message: discord.Message):
@@ -84,24 +84,20 @@ def _get_user(user: Union[discord.Member, discord.User]) -> model.User:
     )
 
 
-def _get_channel(channel: "Union[Messageable, GuildChannel]") -> model.Channel:
+def _get_channel(channel: "Union[MessageableChannel, GuildChannel]") -> model.Channel:
     """Convert a discord message's channel/thread into its model object"""
 
-    if isinstance(channel, discord.TextChannel):
-        return model.Channel(  # type: ignore
-            uid=channel.id, name=channel.name, thread=False
-        )
+    name = getattr(channel, "name", None)
+    if name is None:
+        raise ValueError("Unsupported object: " + str(channel))
 
-    if isinstance(channel, discord.Thread):
-        thread = channel
-        return model.Channel(  # type: ignore
-            uid=thread.id,
-            name=thread.name,
-            thread=True,
-            thread_archived=thread.archived,
-        )
-
-    raise ValueError("Unsupported object: " + str(channel))
+    return model.Channel(  # type: ignore
+        uid=channel.id,
+        name=name,
+        thread=channel.type
+        in (discord.ChannelType.public_thread, discord.ChannelType.private_thread),
+        thread_archived=getattr(channel, "archived", None),
+    )
 
 
 def _get_message_ref(ref: discord.MessageReference) -> Optional[model.Message]:
