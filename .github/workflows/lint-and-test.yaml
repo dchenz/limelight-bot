@@ -18,12 +18,13 @@ jobs:
         run: |
           pip install -r requirements-dev.txt
           pip install -r requirements.txt
+          pip install -r requirements-server.txt
       - name: Black formatting
         run: |
           black --check .
       - name: Pylint check
         run: |
-          pylint *.py cogs database services tests
+          pylint *.py cogs database services tests graphapi
       - name: Pyright check
         run: |
           pyright .

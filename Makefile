@@ -1,6 +1,6 @@
 lint:
 	black --check .
-	pylint *.py cogs database services tests
+	pylint *.py cogs database services tests graphapi
 	pyright .
 
 format:
