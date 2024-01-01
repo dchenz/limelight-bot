@@ -15,7 +15,7 @@ load_dotenv()
 
 if __name__ == "__main__":
     token = load_env_required("BOT_TOKEN")
-    db_connection_string = load_env_required("BOT_DB_CONNECTION_STRING")
+    db_connection_string = load_env_required("DB_CONNECTION_STRING")
 
     logging.basicConfig(
         level=logging.getLevelName(os.environ.get("BOT_LOG_LEVEL", "ERROR").upper()),

@@ -18,7 +18,7 @@ docker run --env-file .env limelight-bot
 
 ```sh
 # Install python dependencies.
-pip3 install -r requirements.txt
+pip3 install -r requirements-bot.txt
 
 # Start the bot.
 python3 bot.py
@@ -26,8 +26,8 @@ python3 bot.py
 
 ## Environment variables
 
+- `DB_CONNECTION_STRING`: Connection string passed to sqlalchemy. Required.
 - `BOT_TOKEN`: Discord bot token. Required.
-- `BOT_DB_CONNECTION_STRING`: Connection string passed to sqlalchemy. Required.
 - `BOT_LOG_LEVEL`: Log level. Defaults to ERROR.
 - `BOT_LOG_SQLALCHEMY`: Enables debug mode in sqlalchemy. Defaults to false.
 
