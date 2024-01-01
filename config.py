@@ -1,22 +1,19 @@
-import yaml
-from schema import Optional, Schema
+import os
 
 
-def load_config() -> dict:
-    config_schema = Schema(
-        {
-            "token": str,
-            Optional("logging"): {
-                Optional("level", default="ERROR"): str,
-                Optional("sqlalchemy", default=False): bool,
-            },
-            "database": {
-                "connection_string": str,
-            },
-        }
-    )
-    with open("./config.yaml", "r", encoding="utf-8") as f:
-        config = config_schema.validate(yaml.safe_load(f))
-        if "logging" not in config:
-            config["logging"] = {"level": "ERROR", "sqlalchemy": False}
-    return config
+class ConfigError(Exception):
+    pass
+
+
+def load_env_required(name: str) -> str:
+    value = os.environ.get(name)
+    if not value:
+        raise ConfigError(f"Missing environment variable: {name}")
+    return value
+
+
+def load_env_boolean(name: str, default_value=False) -> bool:
+    value = os.environ.get(name)
+    if value is None:
+        return default_value
+    return value.lower() in ("1", "true", "yes")

@@ -1,25 +1,30 @@
 import logging
+import os
 
 from discord import Intents
 from discord.ext import commands
+from dotenv import load_dotenv
 
 # Required to initialize sqlalchemy models.
 # pylint: disable=unused-import
 import database.model
-from config import load_config
+from config import load_env_boolean, load_env_required
 from database import init_database
 
+load_dotenv()
+
 if __name__ == "__main__":
-    config = load_config()
+    token = load_env_required("BOT_TOKEN")
+    db_connection_string = load_env_required("BOT_DB_CONNECTION_STRING")
 
     logging.basicConfig(
-        level=logging.getLevelName(config["logging"]["level"].upper()),
+        level=logging.getLevelName(os.environ.get("BOT_LOG_LEVEL", "ERROR").upper()),
         format="%(asctime)s :: %(levelname)s :: %(message)s",
     )
 
     init_database(
-        connection_string=config["database"]["connection_string"],
-        debug=config["logging"]["sqlalchemy"],
+        connection_string=db_connection_string,
+        debug=load_env_boolean("BOT_LOG_SQLALCHEMY"),
     )
 
     bot_intents = Intents.default()
@@ -37,4 +42,4 @@ if __name__ == "__main__":
             return
         raise error
 
-    bot.run(config["token"])
+    bot.run(token)

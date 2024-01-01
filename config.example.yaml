@@ -1,8 +1,0 @@
-token: my token
-
-logging:
-  level: info
-  sqlalchemy: false # uses log level INFO
-
-database:
-  connection_string: sqlite:///relative/path

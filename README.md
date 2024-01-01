@@ -7,15 +7,21 @@ This bot is used to download every message in a Discord server and keep it in sy
 ## Setup
 
 ```sh
-# Edit the placeholder values with your bot configuration.
-cp config.example.yaml config.yaml && vim config.yaml
-
 # Install python dependencies.
 pip3 install -r requirements.txt
 
 # Start the bot.
-python3 run.py
+python3 bot.py
 ```
+
+## Environment variables
+
+- `BOT_TOKEN`: Discord bot token. Required.
+- `BOT_DB_CONNECTION_STRING`: Connection string passed to sqlalchemy. Required.
+- `BOT_LOG_LEVEL`: Log level. Defaults to ERROR.
+- `BOT_LOG_SQLALCHEMY`: Enables debug mode in sqlalchemy. Defaults to false.
+
+The bot can automatically load from a `.env` file.
 
 ## Commands
 
