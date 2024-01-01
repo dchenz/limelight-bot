@@ -1,0 +1,14 @@
+FROM python:3.10.12-slim
+
+WORKDIR /app
+
+COPY requirements-server.txt .
+
+RUN pip install -r requirements-server.txt
+
+COPY server.py .
+COPY config.py .
+ADD database ./database/
+ADD graphapi ./graphapi/
+
+CMD ["python3", "server.py"]

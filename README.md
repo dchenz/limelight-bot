@@ -2,14 +2,14 @@
 
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-This bot is used to download every message in a Discord server and keep it in sync with a database. The database is shared with the Limelight backend server (see other repository), which aims to provide better search and filtering than Discord's built-in functions.
+This bot is used to download every message in a Discord server and keep it in sync with a database. The database is shared with the Limelight backend, which aims to provide better search and filtering than Discord's built-in functions.
 
-## Setup
+## Setup bot
 
 ### With Docker
 
 ```
-docker build -f Dockerfile.bot -t limelight-bot
+docker build -f Dockerfile.bot -t limelight-bot .
 
 docker run --env-file .env limelight-bot
 ```
@@ -23,6 +23,27 @@ pip3 install -r requirements-bot.txt
 # Start the bot.
 python3 bot.py
 ```
+
+## Setup server
+
+### With Docker
+
+```
+docker build -f Dockerfile.server -t limelight-server .
+
+docker run --env-file .env -p 5000:5000 limelight-server
+```
+
+### Manual
+
+```sh
+# Install python dependencies.
+pip3 install -r requirements-server.txt
+
+# Start the server.
+python3 server.py
+```
+
 
 ## Environment variables
 
