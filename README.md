@@ -24,6 +24,15 @@ pip3 install -r requirements-bot.txt
 python3 bot.py
 ```
 
+### Environment variables
+
+- `DB_CONNECTION_STRING`: Connection string passed to sqlalchemy. Required.
+- `BOT_TOKEN`: Discord bot token. Required.
+- `BOT_LOG_LEVEL`: Log level. Defaults to ERROR.
+- `BOT_LOG_SQLALCHEMY`: Enables debug mode in sqlalchemy. Defaults to false.
+
+It automatically loads from `.env`.
+
 ## Setup server
 
 ### With Docker
@@ -44,17 +53,16 @@ pip3 install -r requirements-server.txt
 python3 server.py
 ```
 
-
-## Environment variables
+### Environment variables
 
 - `DB_CONNECTION_STRING`: Connection string passed to sqlalchemy. Required.
-- `BOT_TOKEN`: Discord bot token. Required.
-- `BOT_LOG_LEVEL`: Log level. Defaults to ERROR.
-- `BOT_LOG_SQLALCHEMY`: Enables debug mode in sqlalchemy. Defaults to false.
+- `SERVER_LOG_LEVEL`: Log level. Defaults to ERROR.
+- `SERVER_LOG_SQLALCHEMY`: Enables debug mode in sqlalchemy. Defaults to false.
+- `SERVER_PORT`: Port to listen on. Defaults to 5000.
 
-The bot can automatically load from a `.env` file.
+It automatically loads from `.env`.
 
-## Commands
+## Bot Commands
 
 - `/download`: Download messages in the current channel
 - `/pending`: Show pending channel downloads
