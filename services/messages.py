@@ -1,4 +1,5 @@
 import asyncio
+from dataclasses import dataclass
 from typing import Union
 
 from discord import Message, TextChannel, Thread
@@ -12,20 +13,34 @@ class MessagesServiceError(Exception):
 
 
 class MessagesService:
+    @dataclass
+    class DownloadAction:
+        message: Message
+
+    @dataclass
+    class DeleteAction:
+        message_id: int
+
     def __init__(self):
-        self.pending_message_downloads = asyncio.Queue()
+        self.pending_message_actions: asyncio.Queue[
+            Union[MessagesService.DownloadAction, MessagesService.DeleteAction]
+        ] = asyncio.Queue()
         self.pending_channel_downloads = {}
         loop = asyncio.get_event_loop()
         loop.create_task(self._start_worker())
 
     async def _start_worker(self):
         while True:
-            message: Message = await self.pending_message_downloads.get()
-            save_discord_message(message)
-            self.pending_message_downloads.task_done()
+            action = await self.pending_message_actions.get()
+            match action:
+                case MessagesService.DownloadAction(message):
+                    save_discord_message(message)
+                case MessagesService.DeleteAction(message_id):
+                    delete_discord_message(message_id)
+            self.pending_message_actions.task_done()
 
     async def download_message(self, message: Message):
-        await self.pending_message_downloads.put(message)
+        await self.pending_message_actions.put(MessagesService.DownloadAction(message))
 
     def download_channel(self, channel: Union[TextChannel, Thread]):
         if channel.id in self.pending_channel_downloads:
@@ -47,4 +62,4 @@ class MessagesService:
         ]
 
     async def delete_message(self, message_id: int):
-        delete_discord_message(message_id)
+        await self.pending_message_actions.put(MessagesService.DeleteAction(message_id))
