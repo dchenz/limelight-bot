@@ -6,6 +6,16 @@ This bot is used to download every message in a Discord server and keep it in sy
 
 ## Setup
 
+### With Docker
+
+```
+docker build -f Dockerfile.bot -t limelight-bot
+
+docker run --env-file .env limelight-bot
+```
+
+### Manual
+
 ```sh
 # Install python dependencies.
 pip3 install -r requirements.txt

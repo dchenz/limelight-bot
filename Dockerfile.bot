@@ -1,0 +1,17 @@
+FROM python:3.10.12-slim
+
+WORKDIR /app
+
+RUN apt update && apt install -y git
+
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
+
+COPY bot.py .
+COPY config.py .
+ADD cogs ./cogs/
+ADD database ./database/
+ADD services ./services/
+
+CMD ["python3", "bot.py"]
