@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING
 
-from graphene import BigInt as GrapheneBigInt
 from graphene import Boolean as GrapheneBoolean
 from graphene import DateTime as GrapheneDatetime
 from graphene import Int as GrapheneInt
@@ -21,7 +20,7 @@ def _map_column_type(column_type) -> "BaseType":
     if isinstance(column_type, (SQLString, SQLText)):
         return GrapheneString()
     if isinstance(column_type, SQLBigInt):
-        return GrapheneBigInt()
+        return GrapheneString()
     if isinstance(column_type, SqlInt):
         return GrapheneInt()
     if isinstance(column_type, SQLBoolean):
